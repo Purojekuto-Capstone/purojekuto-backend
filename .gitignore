@@ -140,3 +140,5 @@ Thumbs.db
 
 # profiling data
 .prof
+
+client_secret.json
