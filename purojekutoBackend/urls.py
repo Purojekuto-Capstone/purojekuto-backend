@@ -17,4 +17,8 @@ from projects import views
 from django.contrib import admin
 from django.urls import path, include
 
-urlpatterns = [path("admin/", admin.site.urls), path("projects/", views.test_endpoint)]
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("login/", views.login_endpoint),
+    path("checkauth/", views.check_auth),
+]
