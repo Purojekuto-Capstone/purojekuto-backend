@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 import google_auth_oauthlib.flow
 import datetime
 import jwt
+import base64
 
 
 @api_view(["GET"])
@@ -21,7 +22,7 @@ def login_endpoint(request):
 
     flow.redirect_uri = "http://localhost:8000/checkauth"
 
-    authorization_url = flow.authorization_url(
+    authorization_url, state = flow.authorization_url(
         access_type="offline", include_granted_scopes="true"
     )
 
@@ -53,6 +54,10 @@ def check_auth(request):
     # Starting a new service to the calendar API with the right credentials
     service = build("calendar", "v3", credentials=credentials)
 
+    plainToken = credentials.token
+
+    token = base64.b64encode(plainToken.encode("utf8"))
+
     # Getting the primary calendar to get its id
     calendar = service.calendars().get(calendarId="primary").execute()
 
@@ -60,7 +65,7 @@ def check_auth(request):
 
     # token = jwt.encode({"token": "thisisthetoken"}, "temporalsecret", algorithm="HS256")
 
-    return Response("todo bien")
+    return HttpResponseRedirect(f"http://localhost:3000/redirect/{token}")
 
 
 # Ask for primary calendar to get email to keep an user
