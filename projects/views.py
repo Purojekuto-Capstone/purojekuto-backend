@@ -17,7 +17,13 @@ def login_endpoint(request):
     """
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        "client_secret.json", scopes=["https://www.googleapis.com/auth/calendar"]
+        "client_secret.json",
+        scopes=[
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "openid",
+        ],
     )
 
     flow.redirect_uri = "http://localhost:8000/checkauth"
@@ -38,7 +44,12 @@ def check_auth(request):
     # Passing credentials to start flow oauth auth
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         "client_secret.json",
-        scopes=["https://www.googleapis.com/auth/calendar"],
+        scopes=[
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "openid",
+        ],
         state=request.query_params["state"],
     )
     flow.redirect_uri = "http://localhost:8000/checkauth"
@@ -66,6 +77,3 @@ def check_auth(request):
     # token = jwt.encode({"token": "thisisthetoken"}, "temporalsecret", algorithm="HS256")
 
     return HttpResponseRedirect(f"http://localhost:3000/redirect/{token}")
-
-
-# Ask for primary calendar to get email to keep an user
