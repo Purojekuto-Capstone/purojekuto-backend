@@ -30,21 +30,27 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
-    #BASE APPS
+BASE_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # LOCAL APPS
-    'projects',
-    # THIRD APPS
+]
+
+LOCAL_APPS = [
+    'apps.projects',
+    'apps.auths',
+]
+
+THIRD_APPS = [
     'rest_framework',
     'simple_history',
     'drf_yasg',
 ]
+
+INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
 
 MIDDLEWARE = [
