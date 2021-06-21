@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from apps.projects.api.serializers.projects_serializers import *
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    serializers_class = ProjectSerializer
+    serializer_class = ProjectSerializer
 
-    def get_queryset(self):
+    def get_queryset(self, pk = None):
         if pk is None:
             return self.get_serializer().Meta.model.objects.filter(state = True)
         return self.get_serializer().Meta.model.objects.filter(id = pk, state = True).first()
