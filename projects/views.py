@@ -27,7 +27,7 @@ def login_endpoint(request):
         ],
     )
 
-    flow.redirect_uri = "http://localhost:8000/checkauth"
+    flow.redirect_uri = f"{env_variables.SERVER_URL}/checkauth"
 
     authorization_url, state = flow.authorization_url(
         access_type="offline", include_granted_scopes="true"
@@ -53,11 +53,11 @@ def check_auth(request):
         ],
         state=request.query_params["state"],
     )
-    flow.redirect_uri = "http://localhost:8000/checkauth"
+    flow.redirect_uri = f"{env_variables.SERVER_URL}/checkauth"
 
     # Getting the auth token to make petitions
     flow.fetch_token(
-        authorization_response=f"https://localhost:8000'{request.get_full_path()}"
+        authorization_response=f"https://localhost:8000{request.get_full_path()}"
     )
 
     # Saving the credentials
@@ -77,4 +77,4 @@ def check_auth(request):
 
     # token = jwt.encode({"token": "thisisthetoken"}, "temporalsecret", algorithm="HS256")
 
-    return HttpResponseRedirect(f"http://localhost:3000/redirect/{token}")
+    return HttpResponseRedirect(f"{env_variables.CLIENT_URL}/redirect/{token}")

@@ -131,6 +131,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 class EnvVariables:
     GOOGLE_CREDENTIALS: str = os.getenv("GOOGLE_CREDENTIALS")
+    SERVER_URL: str = os.getenv("SERVER_URL")
+    CLIENT_URL: str = os.getenv("CLIENT_URL")
 
 
 env_variables = EnvVariables()
