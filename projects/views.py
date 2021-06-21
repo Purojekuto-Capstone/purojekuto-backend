@@ -1,13 +1,14 @@
 from django.http import HttpResponseRedirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from purojekutoBackend.settings import env_variables
 
 import google.oauth2.credentials
 from googleapiclient.discovery import build
 import google_auth_oauthlib.flow
-import datetime
 import jwt
 import base64
+import json
 
 
 @api_view(["GET"])
@@ -16,8 +17,8 @@ def login_endpoint(request):
     Logging with google to get access to its calendar
     """
 
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        "client_secret.json",
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(
+        json.loads(env_variables.GOOGLE_CREDENTIALS),
         scopes=[
             "https://www.googleapis.com/auth/calendar",
             "https://www.googleapis.com/auth/userinfo.profile",
@@ -42,8 +43,8 @@ def check_auth(request):
     """
 
     # Passing credentials to start flow oauth auth
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        "client_secret.json",
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(
+        json.loads(env_variables.GOOGLE_CREDENTIALS),
         scopes=[
             "https://www.googleapis.com/auth/calendar",
             "https://www.googleapis.com/auth/userinfo.profile",
