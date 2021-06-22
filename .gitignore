@@ -142,3 +142,5 @@ Thumbs.db
 .prof
 
 client_secret.json
+
+.vscode
