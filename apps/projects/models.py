@@ -1,5 +1,6 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
+from django.utils.timezone import now
 
 class ProjectCategory(models.Model):
     # Define fields here
@@ -34,6 +35,12 @@ class Project(models.Model):
 
     project_name = models.CharField(max_length=30)
     project_category = models.ForeignKey(ProjectCategory, on_delete = models.CASCADE, verbose_name = "Project Category")
+    recurrent = models.BooleanField('Recurrent Project', default = False)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    work_time = models.DurationField(default=None)
+    break_time = models.DurationField(default=None)
+
     historical = HistoricalRecords()
 
     @property
@@ -84,6 +91,10 @@ class Activity(models.Model):
 
     activity_name = models.CharField(max_length=30)
     activity_category = models.ForeignKey(ActivityCategory, on_delete = models.CASCADE, verbose_name = "Project Category")
+    recurrent = models.BooleanField('Recurrent Project', default = False)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
     historical = HistoricalRecords()
 
     @property
