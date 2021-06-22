@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from apps.projects import views
+from apps.auths.views import login_endpoint, check_auth
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("login/", views.login_endpoint),
-    path("checkauth/", views.check_auth),
+    path("login/", login_endpoint),
+    path("checkauth/", check_auth),
     path("projects", include("apps.projects.api.routers")),
 ]
