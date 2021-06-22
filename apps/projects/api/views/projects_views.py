@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from apps.projects.api.serializers.projects_serializers import *
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    serializerac_class = ProjectSerializer
+    serializer_class = ProjectSerializer
 
     def get_queryset(self, pk = None):
         if pk is None:
