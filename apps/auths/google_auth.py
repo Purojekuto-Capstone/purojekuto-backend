@@ -1,6 +1,9 @@
+from apps.auths.users_views import UsersViewSet
 import google_auth_oauthlib.flow
 from google.oauth2 import id_token
+from google.auth.transport import Response, requests
 import json
+import jwt
 
 from purojekutoBackend.settings import env_variables
 
@@ -47,3 +50,35 @@ def get_credentials(request):
     credentials = flow.credentials
 
     return credentials
+
+
+def get_jwt(credentials):
+    google_request = requests.Request()
+    decoded_user_data = id_token.verify_oauth2_token(
+        credentials.id_token, google_request
+    )
+
+    userData = dict()
+    userData["sub"] = decoded_user_data["sub"]
+    userData["email"] = decoded_user_data["email"]
+    userData["name"] = decoded_user_data["name"]
+    userData["picture"] = decoded_user_data["picture"]
+
+    find_user = UsersViewSet().get(userData["sub"])
+
+    if len(find_user) == 1:
+        token = jwt.encode(
+            {"sub": userData["sub"]}, "temporalSecret", algorithm="HS256"
+        )
+        return token
+    else:
+        UsersViewSet().create(userData)
+        token = jwt.encode(
+            {"sub": userData["sub"]}, "temporalSecret", algorithm="HS256"
+        )
+        return token
+
+    # print("sub", decoded_user_data["sub"])
+    # print("email", decoded_user_data["email"])
+    # print("name", decoded_user_data["name"])
+    # print("picture", decoded_user_data["picture"])
