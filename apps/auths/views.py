@@ -1,10 +1,15 @@
 from django.http import HttpResponseRedirect
+from httplib2.error import ProxiesUnavailableError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from purojekutoBackend.settings import env_variables
+from apps.auths.google_auth import get_auth_url, get_credentials
 
 import google.oauth2.credentials
 from googleapiclient.discovery import build
+from google.oauth2 import id_token
+from google.auth.transport import requests
 import google_auth_oauthlib.flow
 import jwt
 import base64
@@ -14,67 +19,32 @@ import json
 @api_view(["GET"])
 def login_endpoint(request):
     """
-    Logging with google to get access to its calendar
+    Logging with google to get access to its calendar and user data
     """
+    auth_url = get_auth_url()
 
-    flow = google_auth_oauthlib.flow.Flow.from_client_config(
-        json.loads(env_variables.GOOGLE_CREDENTIALS),
-        scopes=[
-            "https://www.googleapis.com/auth/calendar",
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/userinfo.email",
-            "openid",
-        ],
-    )
-
-    flow.redirect_uri = f"{env_variables.SERVER_URL}/checkauth"
-
-    authorization_url, state = flow.authorization_url(
-        access_type="offline", include_granted_scopes="true"
-    )
-
-    return HttpResponseRedirect(authorization_url)
+    return HttpResponseRedirect(auth_url)
 
 
 @api_view(["GET"])
 def check_auth(request):
+
     """
-    Exchanging the code received in login_endpoint to get a token to make petitions
+    Exchanging the code received in login_endpoint to get the right credentials
     """
+    credentials = get_credentials(request)
 
-    # Passing credentials to start flow oauth auth
-    flow = google_auth_oauthlib.flow.Flow.from_client_config(
-        json.loads(env_variables.GOOGLE_CREDENTIALS),
-        scopes=[
-            "https://www.googleapis.com/auth/calendar",
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/userinfo.email",
-            "openid",
-        ],
-        state=request.query_params["state"],
-    )
-    flow.redirect_uri = f"{env_variables.SERVER_URL}/checkauth"
+    # google_request = requests.Request()
+    # decoded_user_data = id_token.verify_oauth2_token(
+    #     credentials.id_token, google_request
+    # )
 
-    # Getting the auth token to make petitions
-    flow.fetch_token(
-        authorization_response=f"https://localhost:8000{request.get_full_path()}"
-    )
+    # print("sub", decoded_user_data["sub"])
+    # print("email", decoded_user_data["email"])
+    # print("name", decoded_user_data["name"])
+    # print("picture", decoded_user_data["picture"])
 
-    # Saving the credentials
-    credentials = flow.credentials
-
-    # Starting a new service to the calendar API with the right credentials
-    service = build("calendar", "v3", credentials=credentials)
-
-    plainToken = credentials.token
-
-    token = base64.b64encode(plainToken.encode("utf8"))
-
-    # Getting the primary calendar to get its id
-    calendar = service.calendars().get(calendarId="primary").execute()
-
-    print("aqui esta el calendario", calendar["id"])
-
+    # print(decoded_user_data)
     # token = jwt.encode({"token": "thisisthetoken"}, "temporalsecret", algorithm="HS256")
 
-    return HttpResponseRedirect(f"{env_variables.CLIENT_URL}/redirect/{token}")
+    return HttpResponseRedirect(f"{env_variables.CLIENT_URL}/redirect/")
