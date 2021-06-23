@@ -35,7 +35,7 @@ class Project(models.Model):
 
     project_name = models.CharField(max_length=30)
     project_category = models.ForeignKey(ProjectCategory, on_delete = models.CASCADE, verbose_name = "Project Category")
-    recurrent = models.BooleanField('Recurrent Project', default = False)
+    is_recurrent = models.BooleanField('Recurrent Project', default = False)
     start_date = models.DateField()
     end_date = models.DateField()
     work_time = models.DurationField(default=None)
@@ -91,7 +91,7 @@ class Activity(models.Model):
 
     activity_name = models.CharField(max_length=30)
     activity_category = models.ForeignKey(ActivityCategory, on_delete = models.CASCADE, verbose_name = "Project Category")
-    recurrent = models.BooleanField('Recurrent Project', default = False)
+    is_recurrent = models.BooleanField('Recurrent Project', default = False)
     start_date = models.DateField()
     end_date = models.DateField()
 
