@@ -6,3 +6,5 @@ class User(models.Model):
     name = models.CharField(max_length=300)
     email = models.EmailField(null=False)
     picture = models.URLField()
+
+    id = models.AutoField(primary_key = True)

@@ -1,6 +1,7 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
 from django.utils.timezone import now
+from apps.auths.models import User
 
 class ProjectCategory(models.Model):
     # Define fields here
@@ -28,6 +29,9 @@ class ProjectCategory(models.Model):
 class Project(models.Model):
     # Define fields here
     id = models.AutoField(primary_key = True)
+
+    user = models.ForeignKey(User,  on_delete= models.CASCADE)
+
     state = models.BooleanField('State', default = True)
     created_date = models.DateField('Creation date', auto_now = False, auto_now_add = True)
     modified_date = models.DateField('Modified date', auto_now = True, auto_now_add = False)
@@ -84,6 +88,10 @@ class ActivityCategory(models.Model):
 class Activity(models.Model):
     # Define fields here
     id = models.AutoField(primary_key = True)
+
+    project = models.ForeignKey(Project,  on_delete= models.CASCADE)
+    user = models.ForeignKey(User,  on_delete= models.CASCADE)
+
     state = models.BooleanField('State', default = True)
     created_date = models.DateField('Creation date', auto_now = False, auto_now_add = True)
     modified_date = models.DateField('Modified date', auto_now = True, auto_now_add = False)
