@@ -9,6 +9,6 @@ router.register(r'project_category', ProjectCategoryViewSet, basename = 'project
 router.register(r'activity_category', ActivityCategoryViewSet, basename = 'activity_category')
 router.register(r'project', ProjectViewSet, basename = 'project')
 router.register(r'activity', ActivityViewSet, basename = 'activity')
-
+router.register(r'progress', ProgressViewSet, basename = 'progress')
 
 urlpatterns = router.urls

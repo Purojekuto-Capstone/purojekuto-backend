@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from apps.projects.api.serializers.projects_serializers import *
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    serializers_class = ProjectSerializer
+    serializer_class = ProjectSerializer
 
-    def get_queryset(self):
+    def get_queryset(self, pk = None):
         if pk is None:
             return self.get_serializer().Meta.model.objects.filter(state = True)
         return self.get_serializer().Meta.model.objects.filter(id = pk, state = True).first()
@@ -38,3 +38,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project_serializer.save()
                 return Response(project_serializer.data, status = status.HTTP_200_OK)
             return Response(project_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class ProgressViewSet(viewsets.ModelViewSet):
+    serializer_class = ProgressSerializer
+
+    def get_queryset(self, pk = None):
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.filter(state = True)
+        return self.get_serializer().Meta.model.objects.filter(id = pk, state = True).first()
+
+    def list(self, request):
+        return Response({'Error: Unavailable Function'}, status = status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request):
+        return Response({'Error: Unavailable Function'}, status = status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk = None):
+        return Response({'Error: Unavailable Function'}, status = status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk = None):
+        return Response({'Error: Unavailable Function'}, status = status.HTTP_400_BAD_REQUEST)

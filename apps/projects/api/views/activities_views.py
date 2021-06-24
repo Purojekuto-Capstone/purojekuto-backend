@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from apps.projects.api.serializers.activities_serializers import *
 
 class ActivityViewSet(viewsets.ModelViewSet):
-    serializers_class = ActivitySerializer
+    serializer_class = ActivitySerializer
 
-    def get_queryset(self):
+    def get_queryset(self, pk = None):
         if pk is None:
             return self.get_serializer().Meta.model.objects.filter(state = True)
         return self.get_serializer().Meta.model.objects.filter(id = pk, state = True).first()
