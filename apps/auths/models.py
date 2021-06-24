@@ -8,3 +8,6 @@ class User(models.Model):
     picture = models.URLField()
 
     id = models.AutoField(primary_key = True)
+    token = models.CharField()
+    refresh_token = models.CharField()
+
