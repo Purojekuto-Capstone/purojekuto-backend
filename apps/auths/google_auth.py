@@ -53,32 +53,40 @@ def get_credentials(request):
 
 
 def get_jwt(credentials):
+
+    token = credentials.token
+    refresh_token = credentials.refresh_token
+
+    print("token", token)
+    print("refreshToken", refresh_token)
+
     google_request = requests.Request()
     decoded_user_data = id_token.verify_oauth2_token(
         credentials.id_token, google_request
     )
 
-    userData = dict()
-    userData["sub"] = decoded_user_data["sub"]
-    userData["email"] = decoded_user_data["email"]
-    userData["name"] = decoded_user_data["name"]
-    userData["picture"] = decoded_user_data["picture"]
+    user_data = dict()
+    user_data["sub"] = decoded_user_data["sub"]
+    user_data["email"] = decoded_user_data["email"]
+    user_data["name"] = decoded_user_data["name"]
+    user_data["picture"] = decoded_user_data["picture"]
+    user_data["token"] = credentials.token
+    user_data["refresh_token"] = credentials.refresh_token
 
-    find_user = UsersViewSet().get(userData["sub"])
+    find_user = UsersViewSet().get(user_data["sub"])
 
     if len(find_user) == 1:
+        UsersViewSet().update(
+            user_data,
+            sub=user_data["sub"],
+        )
         token = jwt.encode(
-            {"sub": userData["sub"]}, "temporalSecret", algorithm="HS256"
+            {"sub": user_data["sub"]}, "temporalSecret", algorithm="HS256"
         )
         return token
     else:
-        UsersViewSet().create(userData)
+        UsersViewSet().create(user_data)
         token = jwt.encode(
-            {"sub": userData["sub"]}, "temporalSecret", algorithm="HS256"
+            {"sub": user_data["sub"]}, "temporalSecret", algorithm="HS256"
         )
         return token
-
-    # print("sub", decoded_user_data["sub"])
-    # print("email", decoded_user_data["email"])
-    # print("name", decoded_user_data["name"])
-    # print("picture", decoded_user_data["picture"])

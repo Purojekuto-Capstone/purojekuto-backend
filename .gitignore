@@ -147,3 +147,5 @@ Thumbs.db
 client_secret.json
 
 .vscode
+
+migrations/
