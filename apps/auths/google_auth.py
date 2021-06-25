@@ -1,4 +1,4 @@
-from apps.auths.users_views import UsersViewSet
+from apps.auths.users_views import UsersView
 import google_auth_oauthlib.flow
 from google.oauth2 import id_token
 from google.auth.transport import Response, requests
@@ -26,7 +26,7 @@ def get_auth_url():
     flow.redirect_uri = redirect_uri
 
     authorization_url, state = flow.authorization_url(
-        access_type="offline", include_granted_scopes="true"
+        access_type="offline", include_granted_scopes="true", prompt="consent"
     )
     return authorization_url
 
@@ -54,11 +54,8 @@ def get_credentials(request):
 
 def get_jwt(credentials):
 
-    token = credentials.token
-    refresh_token = credentials.refresh_token
-
-    print("token", token)
-    print("refreshToken", refresh_token)
+    print("token", credentials.token)
+    print("refreshToken", credentials.refresh_token)
 
     google_request = requests.Request()
     decoded_user_data = id_token.verify_oauth2_token(
@@ -73,19 +70,16 @@ def get_jwt(credentials):
     user_data["token"] = credentials.token
     user_data["refresh_token"] = credentials.refresh_token
 
-    find_user = UsersViewSet().get(user_data["sub"])
+    find_user = UsersView().get(user_data["sub"])
 
     if len(find_user) == 1:
-        UsersViewSet().update(
-            user_data,
-            sub=user_data["sub"],
-        )
+        UsersView().update(body=user_data, sub=user_data["sub"])
         token = jwt.encode(
             {"sub": user_data["sub"]}, "temporalSecret", algorithm="HS256"
         )
         return token
     else:
-        UsersViewSet().create(user_data)
+        UsersView().create(user_data)
         token = jwt.encode(
             {"sub": user_data["sub"]}, "temporalSecret", algorithm="HS256"
         )

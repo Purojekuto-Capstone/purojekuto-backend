@@ -27,6 +27,7 @@ def check_auth(request):
     try:
         token = get_jwt(credentials)
     except Exception as e:
+        print("here is the error", e)
         return HttpResponseServerError()
 
     return HttpResponseRedirect(f"{env_variables.CLIENT_URL}/redirect/{token}")
