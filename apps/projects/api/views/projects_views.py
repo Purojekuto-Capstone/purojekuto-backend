@@ -1,3 +1,4 @@
+from apps.auths.decode_token import decode_token
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -13,10 +14,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def verifyAuth(self, request):
         if request.META.get("HTTP_AUTHORIZATION") == None:
-            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
             return False
         else:
-            return True
+            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
+            decoded_token = decode_token(request.META.get("HTTP_AUTHORIZATION")[7:])
+            if not decoded_token():
+                return False
+            return decoded_token
 
     def get_queryset(self, pk=None):
         if pk is None:
@@ -26,7 +30,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             project_serializer = self.get_serializer(self.get_queryset(), many=True)
             return Response(project_serializer.data, status=status.HTTP_200_OK)
         else:
@@ -35,7 +40,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -50,7 +56,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def destroy(self, request, pk=None):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             project = self.get_queryset().filter(id=pk).first()
             if project:
                 project.state = False
@@ -67,7 +74,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, pk=None):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             if self.get_queryset(pk):
                 project_serializer = self.serializer_class(
                     self.get_queryset(pk), request.data
@@ -89,10 +97,13 @@ class ProgressViewSet(viewsets.ModelViewSet):
 
     def verifyAuth(self, request):
         if request.META.get("HTTP_AUTHORIZATION") == None:
-            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
             return False
         else:
-            return True
+            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
+            decoded_token = decode_token(request.META.get("HTTP_AUTHORIZATION")[7:])
+            if not decoded_token():
+                return False
+            return decoded_token
 
     def get_queryset(self, pk=None):
         if pk is None:
@@ -102,7 +113,8 @@ class ProgressViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             return Response(
                 {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
             )

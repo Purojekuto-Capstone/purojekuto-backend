@@ -1,3 +1,4 @@
+from apps.auths.decode_token import decode_token
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -13,10 +14,13 @@ class ProjectCategoryViewSet(viewsets.GenericViewSet):
 
     def verifyAuth(self, request):
         if request.META.get("HTTP_AUTHORIZATION") == None:
-            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
             return False
         else:
-            return True
+            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
+            decoded_token = decode_token(request.META.get("HTTP_AUTHORIZATION")[7:])
+            if not decoded_token():
+                return False
+            return decoded_token
 
     def get_queryset(self, pk=None):
         if pk is None:
@@ -26,7 +30,8 @@ class ProjectCategoryViewSet(viewsets.GenericViewSet):
         )
 
     def list(self, request):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             project_serializer = self.get_serializer(self.get_queryset(), many=True)
             return Response(project_serializer.data, status=status.HTTP_200_OK)
         else:
@@ -46,7 +51,8 @@ class ActivityCategoryViewSet(viewsets.GenericViewSet):
         )
 
     def list(self, request):
-        if self.verifyAuth(request):
+        token = self.verifyAuth(request)
+        if token:
             return self.get_serializer().Meta.model.objects.filter(state=True)
         else:
             return Response(
