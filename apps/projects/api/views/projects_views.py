@@ -1,3 +1,4 @@
+from apps.projects.calendar_views import CalendarAPI
 from apps.auths.decode_token import decode_token
 from rest_framework import status
 from rest_framework import viewsets
@@ -22,17 +23,25 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 return False
             return decoded_token
 
-    def get_queryset(self, pk=None):
-        if pk is None:
+    def get_queryset(self, project_id=None):
+        if project_id is None:
             return self.get_serializer().Meta.model.objects.filter(state=True)
         return (
-            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
+            self.get_serializer()
+            .Meta.model.objects.filter(project_id=project_id, state=True)
+            .first()
         )
 
     def list(self, request):
         token = self.verifyAuth(request)
         if token:
-            project_serializer = self.get_serializer(self.get_queryset(), many=True)
+            project_serializer = self.get_serializer(
+                self.get_queryset(project_id=self.request.query_params["project_id"])
+            )
+            calendar = CalendarAPI().get_calendar(
+                token, self.request.query_params["project_id"]
+            )
+            print("aqui esta el calendar", calendar)
             return Response(project_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
@@ -44,6 +53,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if token:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
+                project_id = CalendarAPI().add_calendar(
+                    token, serializer.validated_data
+                )
+                serializer.validated_data["project_id"] = project_id
                 serializer.save()
                 return Response(
                     {"message": "Project create succesfully"},

@@ -20,7 +20,7 @@ class UsersView:
     def update(self, body, sub):
         find_user = self.get(sub)
         if len(find_user) == 1:
-            find_user.update(token=body["token"], refresh_token=body["refresh_token"])
+            find_user.update(credentials=body["credentials"])
             return {"message": "User updated succesfully"}
         else:
             raise InternalError("No user was found")
