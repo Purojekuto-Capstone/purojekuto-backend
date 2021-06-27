@@ -15,7 +15,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         else:
             print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
             decoded_token = decode_token(request.META.get("HTTP_AUTHORIZATION")[7:])
-            if not decoded_token():
+            if not decoded_token:
                 return False
             return decoded_token
 
@@ -37,9 +37,11 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
+
         token = self.verifyAuth(request)
         if token:
             serializer = self.serializer_class(data=request.data)
+            print(serializer)
             if serializer.is_valid():
                 serializer.save()
                 return Response(
