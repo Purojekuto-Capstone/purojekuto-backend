@@ -67,8 +67,7 @@ def get_jwt(credentials):
     user_data["email"] = decoded_user_data["email"]
     user_data["name"] = decoded_user_data["name"]
     user_data["picture"] = decoded_user_data["picture"]
-    user_data["token"] = credentials.token
-    user_data["refresh_token"] = credentials.refresh_token
+    user_data["credentials"] = credentials.to_json()
 
     find_user = UsersView().get(user_data["sub"])
 

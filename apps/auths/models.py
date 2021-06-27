@@ -8,5 +8,4 @@ class User(models.Model):
     email = models.EmailField(null=False)
     picture = models.URLField()
 
-    token = models.CharField(max_length=300)
-    refresh_token = models.CharField(max_length=300)
+    credentials = models.JSONField()
