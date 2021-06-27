@@ -36,10 +36,12 @@ class CalendarAPI:
 
         return calendar_id
 
-    def get_calendar(self, credentials, body):
+    def get_calendar(self, token, body):
+
+        credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
-        calendar = service.calendars().get(calendarId=body["project_id"]).execute()
+        calendar = service.calendars().get(calendarId=body).execute()
 
         return calendar
 
