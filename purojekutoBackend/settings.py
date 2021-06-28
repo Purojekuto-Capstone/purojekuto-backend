@@ -106,17 +106,24 @@ WSGI_APPLICATION = "purojekutoBackend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env_variables.DB_NAME,
-        "USER": env_variables.DB_USER,
-        "PASSWORD": env_variables.DB_PASSWORD,
-        "HOST": env_variables.DB_HOST,
-        "PORT": env_variables.DB_PORT,
+if env_variables.DEBUG == "1":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env_variables.DB_NAME,
+            "USER": env_variables.DB_USER,
+            "PASSWORD": env_variables.DB_PASSWORD,
+            "HOST": env_variables.DB_HOST,
+            "PORT": env_variables.DB_PORT,
+        }
+    }
 
 
 # Password validation
