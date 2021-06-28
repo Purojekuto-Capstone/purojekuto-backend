@@ -26,7 +26,7 @@ class EnvVariables:
     DB_PASSWORD: str = os.getenv("DB_PASSWORD")
     DB_HOST: str = os.getenv("DB_HOST")
     DB_PORT: str = os.getenv("DB_PORT")
-    DEBUG: bool = os.getenv("DEBUG")
+    DEBUG: int = os.getenv("DEBUG")
     AUTH_RESPONSE_URL = os.getenv("AUTH_RESPONSE_URL")
 
 
@@ -43,9 +43,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env_variables.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_variables.DEBUG
+DEBUG = int(env_variables.DEBUG)
 
-ALLOWED_HOSTS = ["purojekuto-backend.herokuapp.com"]
+ALLOWED_HOSTS = ["purojekuto-backend.herokuapp.com", "localhost"]
 
 
 # Application definition
