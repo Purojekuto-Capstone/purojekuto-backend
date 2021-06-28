@@ -31,8 +31,10 @@ class EventsAPI:
         event = {
             "summary": body["project_name"],
         }
-        created_event = service.events().insert(calendarId=body['id'], body=event).execute()
-        print (created_event["id"])
+        created_event = (
+            service.events().insert(calendarId=body["id"], body=event).execute()
+        )
+        print(created_event["id"])
         event_id = created_event["id"]
 
         return event_id
@@ -42,17 +44,29 @@ class EventsAPI:
         credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
-        event = service.events().get(calendarId=body, eventId = 'eventId').execute()
-        print(event['summary'])
+        event = (
+            service.events()
+            .get(calendarId=body["project_id"], eventId=body["event_id"])
+            .execute()
+        )
+        print(event["summary"])
         return event
 
     def update_calendar(self, credentials, body):
 
         service = build("calendar", "v3", credentials=credentials)
-        calendar = service.events().get(calendarId=body["project_id"], eventId= 'eventId').execute()
+        calendar = (
+            service.events()
+            .get(calendarId=body["project_id"], eventId="eventId")
+            .execute()
+        )
         updated_calendar = (
             service.events()
-            .update(calendarId=calendar["id"], eventId=event['id'], body=body["project_name"])
+            .update(
+                calendarId=calendar["id"],
+                eventId=event["id"],
+                body=body["project_name"],
+            )
             .execute()
         )
 

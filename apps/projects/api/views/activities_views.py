@@ -1,4 +1,4 @@
-from apps.projects.api.views.events_views import EventsAPI
+from apps.projects.events_views import EventsAPI
 from apps.auths.decode_token import decode_token
 
 from rest_framework import status
@@ -25,20 +25,24 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if activity_id is None:
             return self.get_serializer().Meta.model.objects.filter(state=True)
         return (
-            self.get_serializer()
-            .Meta.model.objects.filter(id=pk, state=True)
-            .first()
+            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
         )
 
     def list(self, request):
         token = self.verifyAuth(request)
         if token:
-            activity_serializer = self.get_serializer(self.get_queryset(), many=True)
+            activity_serializer = self.get_serializer(self.get_queryset())
             event = EventsAPI().get_event(
-                token, self.request.query_params["event_id"]
+                token,
+                {
+                    "event_id": self.request.query_params["event_id"],
+                    "project_id": self.request.query_params["project_id"],
+                },
             )
 
-            return Response(activity_serializer.data, status=status.HTTP_200_OK)
+            full_response = activity_serializer.data.update(event)
+
+            return Response(full_response, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
@@ -49,9 +53,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if token:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                activity_id = EventsAPI().add_event(
-                    token, serializer.validated_data
-                )
+                activity_id = EventsAPI().add_event(token, serializer.validated_data)
                 serializer.validated_data["event_id"] = event_id
                 serializer.save()
                 return Response(
