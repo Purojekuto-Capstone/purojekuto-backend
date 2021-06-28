@@ -14,7 +14,6 @@ class UsersView:
         new_user = self.serializer_class(data=body)
         if new_user.is_valid(raise_exception=True):
             new_user.save()
-            print("todo bien")
             return {"message": "User created succesfully"}
 
     def update(self, body, sub):

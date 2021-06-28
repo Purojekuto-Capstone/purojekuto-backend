@@ -1,4 +1,6 @@
+from apps.projects.api.views.events_views import EventsAPI
 from apps.auths.decode_token import decode_token
+
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -19,17 +21,23 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 return False
             return decoded_token
 
-    def get_queryset(self, pk=None):
-        if pk is None:
+    def get_queryset(self, activity_id=None):
+        if activity_id is None:
             return self.get_serializer().Meta.model.objects.filter(state=True)
         return (
-            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
+            self.get_serializer()
+            .Meta.model.objects.filter(id=pk, state=True)
+            .first()
         )
 
     def list(self, request):
         token = self.verifyAuth(request)
         if token:
             activity_serializer = self.get_serializer(self.get_queryset(), many=True)
+            event = EventsAPI().get_event(
+                token, self.request.query_params["event_id"]
+            )
+
             return Response(activity_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
@@ -37,12 +45,14 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
-
         token = self.verifyAuth(request)
         if token:
             serializer = self.serializer_class(data=request.data)
-            print(serializer)
             if serializer.is_valid():
+                activity_id = EventsAPI().add_event(
+                    token, serializer.validated_data
+                )
+                serializer.validated_data["event_id"] = event_id
                 serializer.save()
                 return Response(
                     {"message": "Activity create succesfully"},

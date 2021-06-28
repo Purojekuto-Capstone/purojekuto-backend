@@ -5,9 +5,9 @@ from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 
 
-class CalendarAPI:
-
+class EventsAPI:
     def prepare_credentials(self, token):
+
         credentials_json = json.loads(
             UsersView().get(sub=token["sub"]).values_list("credentials")[0][0]
         )
@@ -22,36 +22,38 @@ class CalendarAPI:
 
         return credentials
 
-    def add_calendar(self, token, body):
+    def add_event(self, token, body):
 
         credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
         # Verify that the project name is not taken already in the db
-        calendar = {
+        event = {
             "summary": body["project_name"],
         }
-        created_calendar = service.calendars().insert(body=calendar).execute()
-        calendar_id = created_calendar["id"]
+        created_event = service.events().insert(calendarId=body['id'], body=event).execute()
+        print (created_event["id"])
+        event_id = created_event["id"]
 
-        return calendar_id
+        return event_id
 
-    def get_calendar(self, token, body):
+    def get_event(self, token, body):
+
         credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
-        calendar = service.calendars().get(calendarId=body).execute()
-
-        return calendar
+        event = service.events().get(calendarId=body, eventId = 'eventId').execute()
+        print(event['summary'])
+        return event
 
     def update_calendar(self, credentials, body):
 
         service = build("calendar", "v3", credentials=credentials)
-        calendar = service.calendars().get(calendarId=body["project_id"]).execute()
+        calendar = service.events().get(calendarId=body["project_id"], eventId= 'eventId').execute()
         updated_calendar = (
-            service.calendars()
-            .update(calendarId=calendar["id"], body=body["project_name"])
+            service.events()
+            .update(calendarId=calendar["id"], eventId=event['id'], body=body["project_name"])
             .execute()
         )
 
-        return updated_calendar["etag"]
+        return updated_event["updated"]
