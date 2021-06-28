@@ -26,7 +26,7 @@ class EnvVariables:
     DB_PASSWORD: str = os.getenv("DB_PASSWORD")
     DB_HOST: str = os.getenv("DB_HOST")
     DB_PORT: str = os.getenv("DB_PORT")
-    DEBUG = os.getenv("DEBUG")
+    DEBUG: bool = os.getenv("DEBUG")
     AUTH_RESPONSE_URL = os.getenv("AUTH_RESPONSE_URL")
 
 
