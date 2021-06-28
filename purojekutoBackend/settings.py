@@ -15,6 +15,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+class EnvVariables:
+    GOOGLE_CREDENTIALS: str = os.getenv("GOOGLE_CREDENTIALS")
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    SERVER_URL: str = os.getenv("SERVER_URL")
+    CLIENT_URL: str = os.getenv("CLIENT_URL")
+    DB_NAME: str = os.getenv("DB_NAME")
+    DB_USER: str = os.getenv("DB_USER")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD")
+    DB_HOST: str = os.getenv("DB_HOST")
+    DB_PORT: str = os.getenv("DB_PORT")
+    DEBUG = os.getenv("DEBUG")
+
+
+env_variables = EnvVariables()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,41 +39,39 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-7d^73@#tvb91l#00ekkcz4z!t5xg2h!0b+io&-u*(bj+^rf&lr"
+SECRET_KEY = env_variables.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_variables.DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["purojekuto-backend.herokuapp.com"]
 
 
 # Application definition
 
 BASE_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 LOCAL_APPS = [
-    'apps.projects',
-    'apps.auths',
+    "apps.projects",
+    "apps.auths",
 ]
 
 THIRD_APPS = [
-    'rest_framework',
-    'simple_history',
-    'drf_yasg',
+    "rest_framework",
+    "simple_history",
+    "drf_yasg",
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
-SWAGGER_SETTINGS = {
-    'DOC_EXPANSION': 'List'
-}
+SWAGGER_SETTINGS = {"DOC_EXPANSION": "List"}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -95,8 +109,12 @@ WSGI_APPLICATION = "purojekutoBackend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env_variables.DB_NAME,
+        "USER": env_variables.DB_USER,
+        "PASSWORD": env_variables.DB_PASSWORD,
+        "HOST": env_variables.DB_HOST,
+        "PORT": env_variables.DB_PORT,
     }
 }
 
@@ -143,12 +161,3 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-class EnvVariables:
-    GOOGLE_CREDENTIALS: str = os.getenv("GOOGLE_CREDENTIALS")
-    SERVER_URL: str = os.getenv("SERVER_URL")
-    CLIENT_URL: str = os.getenv("CLIENT_URL")
-
-
-env_variables = EnvVariables()
