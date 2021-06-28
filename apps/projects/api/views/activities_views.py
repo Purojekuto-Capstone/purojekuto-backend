@@ -31,6 +31,23 @@ class ActivityViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
+        """
+        Return all the ativities/events store in the app
+
+
+        params
+        id ---> The unique id of the event.
+        state ---> The state of the event (False/True).
+        created_date ---> The date the event was created.
+        modified_date ---> The date the event was modified.
+        deleted_date ---> The date the event was deleted.
+        activity_name ---> The name of the activity/event.
+        is_recurrent ---> The event is recurrent (False/True).
+        start_date ---> The date the event was started.
+        end_date ---> The date the event is finish.
+        project ---> The id of the event in calendar.
+        activity_category ---> The category of the event/activity.
+        """
         token = self.verifyAuth(request)
         if token:
             activity_serializer = self.get_serializer(self.get_queryset(), many=True)
@@ -45,6 +62,17 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
+        """
+        Create the ativities/events an store in the app
+
+
+        params
+        activity_name ---> The name of the activity/event.
+        is_recurrent ---> The event is recurrent (False/True).
+        start_date ---> The date the event was started.
+        end_date ---> The date the event is finish.
+        activity_category ---> The category of the event/activity.
+        """
         token = self.verifyAuth(request)
         if token:
             serializer = self.serializer_class(data=request.data)
@@ -65,6 +93,17 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
 
     def destroy(self, request, pk=None):
+        """
+        Delete an activity/event by id
+
+
+        params
+        activity_name ---> The name of the activity/event.
+        is_recurrent ---> The event is recurrent (False/True).
+        start_date ---> The date the event was started.
+        end_date ---> The date the event is finish.
+        activity_category ---> The category of the event/activity.
+        """
         token = self.verifyAuth(request)
         if token:
             activity = self.get_queryset().filter(id=pk).first()
@@ -84,6 +123,17 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, pk=None):
+        """
+        Update the ativities/events an store in the app
+
+
+        params
+        activity_name ---> The name of the activity/event.
+        is_recurrent ---> The event is recurrent (False/True).
+        start_date ---> The date the event was started.
+        end_date ---> The date the event is finish.
+        activity_category ---> The category of the event/activity.
+        """
         token = self.verifyAuth(request)
         if token:
             if self.get_queryset(pk):

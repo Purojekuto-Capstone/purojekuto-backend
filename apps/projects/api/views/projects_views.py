@@ -33,6 +33,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
+        """
+        Return all the projects/calendars store in the app
+
+
+        params
+        user ---> The id of the user.
+        project_name ---> The name of the project.
+        project_category ---> The id of the project category.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        work_time ---> work hours in the week.
+        break_time ---> break hours in the week.
+        """
         token = self.verifyAuth(request)
         if token:
             project_serializer = self.get_serializer(
@@ -49,6 +62,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
+        """
+        Create a projects/calendars
+
+
+        params
+        project_name ---> The name of the project.
+        project_category ---> The id of the project category.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        work_time ---> work hours in the week.
+        break_time ---> break hours in the week.
+        """
         token = self.verifyAuth(request)
         if token:
             serializer = self.serializer_class(data=request.data)
@@ -69,6 +94,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def destroy(self, request, pk=None):
+        """
+        Delete a project/calendar by id
+
+        """
         token = self.verifyAuth(request)
         if token:
             project = self.get_queryset().filter(id=pk).first()
@@ -87,6 +116,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, pk=None):
+        """
+        Update a project/calendar
+
+
+        params
+        project_name ---> The name of the project.
+        project_category ---> The id of the project category.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        work_time ---> work hours in the week.
+        break_time ---> break hours in the week.
+        """
         token = self.verifyAuth(request)
         if token:
             if self.get_queryset(pk):
@@ -126,6 +167,16 @@ class ProgressViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
+        """
+        Return the progress in a project
+
+        params
+        project_id ---> The id of the project.
+        today ---> the current date.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        progress ---> The current progress in the project.
+        """
         token = self.verifyAuth(request)
         if token:
             return Response(
@@ -137,16 +188,25 @@ class ProgressViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
+        """
+        Function not available
+        """
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     def destroy(self, request, pk=None):
+        """
+        Function not available
+        """
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     def update(self, request, pk=None):
+        """
+        Function not available
+        """
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
