@@ -6,7 +6,7 @@ def decode_token(token):
         decoded_token = jwt.decode(
             token,
             "temporalSecret",
-            algorithms="HS256",
+            algorithms=["HS256"]
         )
     except jwt.exceptions.DecodeError:
         return False

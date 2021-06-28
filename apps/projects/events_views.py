@@ -1,17 +1,13 @@
 # In all flows, verify that the project belongs to the user
 import json
-
 from apps.auths.users_views import UsersView
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
-from rest_framework.response import Response
-from rest_framework import status
 
 
-class CalendarAPI:
-
+class EventsAPI:
     def prepare_credentials(self, token):
+
         credentials_json = json.loads(
             UsersView().get(sub=token["sub"]).values_list("credentials")[0][0]
         )
@@ -26,46 +22,52 @@ class CalendarAPI:
 
         return credentials
 
-    def add_calendar(self, token, body):
+    def add_event(self, token, body):
 
         credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
         # Verify that the project name is not taken already in the db
-        calendar = {
+        event = {
             "summary": body["project_name"],
         }
-        created_calendar = service.calendars().insert(body=calendar).execute()
-        calendar_id = created_calendar["id"]
+        created_event = (
+            service.events().insert(calendarId=body["id"], body=event).execute()
+        )
+        print(created_event["id"])
+        event_id = created_event["id"]
 
-        return calendar_id
+        return event_id
 
-    def get_calendar(self, token, body):
+    def get_event(self, token, body):
+
         credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
-        calendar = service.calendars().get(calendarId=body).execute()
+        event = (
+            service.events()
+            .get(calendarId=body["project_id"], eventId=body["event_id"])
+            .execute()
+        )
+        print(event["summary"])
+        return event
 
-        return calendar
+    def update_calendar(self, credentials, body):
 
-    def update_calendar(self, token, project_id, body):
-
-        credentials = self.prepare_credentials(token)
         service = build("calendar", "v3", credentials=credentials)
-        service.calendars().get(calendarId=project_id).execute()
-
-        calendar = {
-            "summary": body["project_name"],
-        }
-
-        try:
-            updated_calendar = (
-                service.calendars()
-                .update(calendarId=project_id, body=calendar)
-                .execute()
+        calendar = (
+            service.events()
+            .get(calendarId=body["project_id"], eventId="eventId")
+            .execute()
+        )
+        updated_calendar = (
+            service.events()
+            .update(
+                calendarId=calendar["id"],
+                eventId=event["id"],
+                body=body["project_name"],
             )
-        except HttpError as e:
-            print(e)
-            return e
+            .execute()
+        )
 
-        return updated_calendar["id"]
+        return updated_event["updated"]

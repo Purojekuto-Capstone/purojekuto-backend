@@ -26,7 +26,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Documentacion de API",
         default_version="v0.1",
-        description="Documentacion publica de API de Ecommerce",
+        description="Documentacion publica de API de Purojekuto",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="jssalgadog@gmail.com"),
         license=openapi.License(name="BSD License"),

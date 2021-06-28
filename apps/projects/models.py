@@ -35,14 +35,12 @@ class ProjectCategory(models.Model):
 class Project(models.Model):
     # Define fields here
     id = models.AutoField(primary_key=True)
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
     state = models.BooleanField("State", default=True)
     created_date = models.DateField("Creation date", auto_now=False, auto_now_add=True)
     modified_date = models.DateField("Modified date", auto_now=True, auto_now_add=False)
     deleted_date = models.DateField("Delete", auto_now=True, auto_now_add=False)
 
+    user = models.ForeignKey(User, to_field="sub", on_delete=models.CASCADE)
     project_id = models.CharField(max_length=100)
     project_name = models.CharField(max_length=30)
     project_category = models.ForeignKey(
@@ -107,15 +105,15 @@ class ActivityCategory(models.Model):
 class Activity(models.Model):
     # Define fields here
     id = models.AutoField(primary_key=True)
-
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
     state = models.BooleanField("State", default=True)
     created_date = models.DateField("Creation date", auto_now=False, auto_now_add=True)
     modified_date = models.DateField("Modified date", auto_now=True, auto_now_add=False)
     deleted_date = models.DateField("Delete", auto_now=True, auto_now_add=False)
 
+    project = models.ForeignKey(
+        Project, to_field="project_id", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(User, to_field="sub", on_delete=models.CASCADE)
     activity_name = models.CharField(max_length=30)
     activity_category = models.ForeignKey(
         ActivityCategory, on_delete=models.CASCADE, verbose_name="Project Category"

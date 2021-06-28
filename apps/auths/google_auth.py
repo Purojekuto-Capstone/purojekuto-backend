@@ -76,10 +76,12 @@ def get_jwt(credentials):
         token = jwt.encode(
             {"sub": user_data["sub"]}, "temporalSecret", algorithm="HS256"
         )
+        print(token)
         return token
     else:
         UsersView().create(user_data)
         token = jwt.encode(
             {"sub": user_data["sub"]}, "temporalSecret", algorithm="HS256"
         )
+        print(token)
         return token
