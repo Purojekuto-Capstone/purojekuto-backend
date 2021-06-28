@@ -1,8 +1,12 @@
 # In all flows, verify that the project belongs to the user
 import json
+
 from apps.auths.users_views import UsersView
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class CalendarAPI:
@@ -45,14 +49,24 @@ class CalendarAPI:
 
         return calendar
 
-    def update_calendar(self, credentials, body):
+    def update_calendar(self, token, project_id, body):
 
+        credentials = self.prepare_credentials(token)
         service = build("calendar", "v3", credentials=credentials)
-        calendar = service.calendars().get(calendarId=body["project_id"]).execute()
-        updated_calendar = (
-            service.calendars()
-            .update(calendarId=calendar["id"], body=body["project_name"])
-            .execute()
-        )
+        service.calendars().get(calendarId=project_id).execute()
 
-        return updated_calendar["etag"]
+        calendar = {
+            "summary": body["project_name"],
+        }
+
+        try:
+            updated_calendar = (
+                service.calendars()
+                .update(calendarId=project_id, body=calendar)
+                .execute()
+            )
+        except HttpError as e:
+            print(e)
+            return e
+
+        return updated_calendar["id"]
