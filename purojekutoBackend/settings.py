@@ -27,6 +27,7 @@ class EnvVariables:
     DB_HOST: str = os.getenv("DB_HOST")
     DB_PORT: str = os.getenv("DB_PORT")
     DEBUG = os.getenv("DEBUG")
+    AUTH_RESPONSE_URL = os.getenv("AUTH_RESPONSE_URL")
 
 
 env_variables = EnvVariables()
@@ -55,7 +56,6 @@ BASE_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
 ]
 
 LOCAL_APPS = [
