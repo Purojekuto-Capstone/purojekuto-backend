@@ -1,0 +1,1 @@
+web: gunicorn purojekutoBackend.wsgi --log-file -

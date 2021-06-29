@@ -27,7 +27,7 @@ class EventsAPI:
         credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
-        # Verify that the project name is not taken already in the db
+
         event = {
             "summary": body["project_name"],
         }
