@@ -116,23 +116,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-<<<<<<< HEAD
-    def update(self, request, pk=None):
-        """
-        Update a project/calendar
-
-
-        params
-        project_name ---> The name of the project.
-        project_category ---> The id of the project category.
-        start_date ---> The date the project was started.
-        end_date ---> The date the project is finish.
-        work_time ---> work hours in the week.
-        break_time ---> break hours in the week.
-        """
-=======
     def put(self, request):
->>>>>>> main
         token = self.verifyAuth(request)
         project_id = self.request.query_params["project_id"]
         if token:
