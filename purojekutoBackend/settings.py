@@ -71,7 +71,10 @@ THIRD_APPS = [
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
-SWAGGER_SETTINGS = {"DOC_EXPANSION": "List"}
+SWAGGER_SETTINGS = {
+    "DOC_EXPANSION": "List",
+    "USE_SESSION_AUTH": False,
+    }
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -33,6 +33,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
+        """
+        Return all the projects/calendars store in the app
+
+
+        params
+        user ---> The id of the user.
+        project_name ---> The name of the project.
+        project_category ---> The id of the project category.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        work_time ---> work hours in the week.
+        break_time ---> break hours in the week.
+        """
         token = self.verifyAuth(request)
         if token:
             project_serializer = self.get_serializer(
@@ -47,6 +60,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
+        """
+        Create a projects/calendars
+
+
+        params
+        project_name ---> The name of the project.
+        project_category ---> The id of the project category.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        work_time ---> work hours in the week.
+        break_time ---> break hours in the week.
+        """
         token = self.verifyAuth(request)
         if token:
             serializer = self.serializer_class(data=request.data)
@@ -70,6 +95,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
             )
 
     def destroy(self, request, pk=None):
+        """
+        Delete a project/calendar by id
+
+        """
         token = self.verifyAuth(request)
         if token:
             project = self.get_queryset().filter(id=pk).first()
@@ -140,6 +169,16 @@ class ProgressViewSet(viewsets.ModelViewSet):
         )
 
     def list(self, request):
+        """
+        Return the progress in a project
+
+        params
+        project_id ---> The id of the project.
+        today ---> the current date.
+        start_date ---> The date the project was started.
+        end_date ---> The date the project is finish.
+        progress ---> The current progress in the project.
+        """
         token = self.verifyAuth(request)
         if token:
             return Response(
@@ -151,16 +190,57 @@ class ProgressViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request):
+        """
+        Function not available
+        """
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     def destroy(self, request, pk=None):
+        """
+        Function not available
+        """
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     def update(self, request, pk=None):
+        """
+        Function not available
+        """
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
+
+class MetricsViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.filter(state=True)
+        return (
+            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
+        )
+
+    def list(self, request):
+        """
+        Return all the ativities/events store in the app
+
+
+        params
+        id ---> The unique id of the event.
+        state ---> The state of the event (False/True).
+        created_date ---> The date the event was created.
+        modified_date ---> The date the event was modified.
+        deleted_date ---> The date the event was deleted.
+        activity_name ---> The name of the activity/event.
+        is_recurrent ---> The event is recurrent (False/True).
+        start_date ---> The date the event was started.
+        end_date ---> The date the event is finish.
+        project ---> The id of the event in calendar.
+        activity_category ---> The category of the event/activity.
+        """
+        project_serializer = self.get_serializer(self.get_queryset(), many=True)
+
+        return Response(project_serializer.data, status=status.HTTP_200_OK)

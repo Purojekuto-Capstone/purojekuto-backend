@@ -30,6 +30,18 @@ class ProjectCategoryViewSet(viewsets.GenericViewSet):
         )
 
     def list(self, request):
+        """
+        Return all the projects categories store in the app
+
+
+        params
+        id ---> The unique id of the event.
+        state ---> The state of the event (False/True).
+        created_date ---> The date the event was created.
+        modified_date ---> The date the event was modified.
+        deleted_date ---> The date the event was deleted.
+        project_category_name ---> The name of the category name.
+        """
         token = self.verifyAuth(request)
         if token:
             project_serializer = self.get_serializer(self.get_queryset(), many=True)
@@ -51,6 +63,18 @@ class ActivityCategoryViewSet(viewsets.GenericViewSet):
         )
 
     def list(self, request):
+        """
+        Return all the activities categories store in the app
+
+
+        params
+        id ---> The unique id of the event.
+        state ---> The state of the event (False/True).
+        created_date ---> The date the event was created.
+        modified_date ---> The date the event was modified.
+        deleted_date ---> The date the event was deleted.
+        activity_category_name ---> The name of the category name.
+        """
         token = self.verifyAuth(request)
         if token:
             return self.get_serializer().Meta.model.objects.filter(state=True)

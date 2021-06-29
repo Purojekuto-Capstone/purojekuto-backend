@@ -14,5 +14,6 @@ router.register(
 router.register(r"project", ProjectViewSet, basename="project")
 router.register(r"activity", ActivityViewSet, basename="activity")
 router.register(r"progress", ProgressViewSet, basename="progress")
+router.register(r"metric", MetricsViewSet, basename="metric")
 
 urlpatterns = router.urls
