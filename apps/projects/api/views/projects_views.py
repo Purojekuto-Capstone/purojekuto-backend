@@ -210,3 +210,35 @@ class ProgressViewSet(viewsets.ModelViewSet):
         return Response(
             {"Error: Unavailable Function"}, status=status.HTTP_400_BAD_REQUEST
         )
+
+class MetricsViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectSerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.filter(state=True)
+        return (
+            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
+        )
+
+    def list(self, request):
+        """
+        Return all the ativities/events store in the app
+
+
+        params
+        id ---> The unique id of the event.
+        state ---> The state of the event (False/True).
+        created_date ---> The date the event was created.
+        modified_date ---> The date the event was modified.
+        deleted_date ---> The date the event was deleted.
+        activity_name ---> The name of the activity/event.
+        is_recurrent ---> The event is recurrent (False/True).
+        start_date ---> The date the event was started.
+        end_date ---> The date the event is finish.
+        project ---> The id of the event in calendar.
+        activity_category ---> The category of the event/activity.
+        """
+        project_serializer = self.get_serializer(self.get_queryset(), many=True)
+
+        return Response(project_serializer.data, status=status.HTTP_200_OK)
