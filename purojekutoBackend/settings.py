@@ -59,10 +59,7 @@ BASE_APPS = [
     "django.contrib.staticfiles",
 ]
 
-LOCAL_APPS = [
-    "apps.projects",
-    "apps.auths",
-]
+LOCAL_APPS = ["apps.auths", "apps.projects", "apps.activities"]
 
 THIRD_APPS = [
     "rest_framework",

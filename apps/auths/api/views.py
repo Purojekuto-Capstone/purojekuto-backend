@@ -3,7 +3,7 @@ from django.http.response import HttpResponseServerError
 from rest_framework.decorators import api_view
 
 from purojekutoBackend.settings import env_variables
-from apps.auths.google_auth import get_auth_url, get_credentials, get_jwt
+from apps.auths.utils.google_auth import get_auth_url, get_credentials, get_jwt
 
 
 @api_view(["GET"])

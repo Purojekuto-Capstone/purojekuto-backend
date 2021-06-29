@@ -1,6 +1,6 @@
 # In all flows, verify that the project belongs to the user
 import json
-from apps.auths.users_views import UsersView
+from apps.auths.utils.users_views import UsersView
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 

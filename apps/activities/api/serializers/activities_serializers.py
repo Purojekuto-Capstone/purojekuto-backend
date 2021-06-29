@@ -1,8 +1,5 @@
-from django.db.models import fields
 from rest_framework import serializers
-
-from apps.projects.models import Activity
-from apps.projects.api.serializers.general_serializers import ActivityCategory
+from apps.activities.models import Activity, ActivityCategory
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -16,3 +13,9 @@ class ActivitySerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
         ]
+
+
+class ActivityCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityCategory
+        fields = "__all__"

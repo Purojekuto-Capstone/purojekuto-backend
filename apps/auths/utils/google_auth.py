@@ -1,7 +1,7 @@
-from apps.auths.users_views import UsersView
+from apps.auths.utils.users_views import UsersView
 import google_auth_oauthlib.flow
 from google.oauth2 import id_token
-from google.auth.transport import Response, requests
+from google.auth.transport import requests
 import json
 import jwt
 

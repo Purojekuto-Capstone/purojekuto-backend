@@ -1,11 +1,13 @@
-from apps.projects.events_views import EventsAPI
-from apps.auths.decode_token import decode_token
-
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from apps.projects.api.serializers.activities_serializers import ActivitySerializer
+from apps.activities.utils.events_views import EventsAPI
+from apps.auths.utils.decode_token import decode_token
+from apps.activities.api.serializers.activities_serializers import (
+    ActivityCategorySerializer,
+    ActivitySerializer,
+)
 
 
 class ActivityViewSet(viewsets.ModelViewSet):
@@ -172,6 +174,38 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 return Response(
                     activity_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )
+        else:
+            return Response(
+                {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+
+class ActivityCategoryViewSet(viewsets.GenericViewSet):
+    serializer_class = ActivityCategorySerializer
+
+    def get_queryset(self, pk=None):
+        if pk is None:
+            return self.get_serializer().Meta.model.objects.filter(state=True)
+        return (
+            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
+        )
+
+    def list(self, request):
+        """
+        Return all the activities categories store in the app
+
+
+        params
+        id ---> The unique id of the event.
+        state ---> The state of the event (False/True).
+        created_date ---> The date the event was created.
+        modified_date ---> The date the event was modified.
+        deleted_date ---> The date the event was deleted.
+        activity_category_name ---> The name of the category name.
+        """
+        token = self.verifyAuth(request)
+        if token:
+            return self.get_serializer().Meta.model.objects.filter(state=True)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED

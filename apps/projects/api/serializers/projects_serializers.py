@@ -1,9 +1,7 @@
-from django.db.models import fields
 from rest_framework import serializers
 import datetime
 
-from apps.projects.models import Project
-from apps.projects.api.serializers.general_serializers import ProjectCategory
+from apps.projects.models import Project, ProjectCategory
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -18,6 +16,12 @@ class ProjectSerializer(serializers.ModelSerializer):
             "work_time",
             "break_time",
         ]
+
+
+class ProjectCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectCategory
+        fields = "__all__"
 
 
 class ProgressSerializer(serializers.ModelSerializer):

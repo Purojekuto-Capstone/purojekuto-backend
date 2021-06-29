@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from apps.auths import views
+from apps.auths.api import views
 
 from rest_framework import permissions
 
@@ -39,7 +39,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("login/", views.login_endpoint),
     path("checkauth/", views.check_auth),
-    path("projects/", include("apps.projects.api.routers")),
+    path("projects/", include("purojekutoBackend.routers")),
     # Swagger documentation
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",

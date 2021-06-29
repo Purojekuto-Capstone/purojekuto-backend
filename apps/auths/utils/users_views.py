@@ -1,6 +1,6 @@
 from django.db import InternalError
 from apps.auths.models import User
-from apps.auths.serializers import UserSerializer
+from apps.auths.api.serializers import UserSerializer
 
 
 class UsersView:

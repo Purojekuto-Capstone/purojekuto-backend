@@ -1,7 +1,14 @@
 from rest_framework.routers import DefaultRouter
-from apps.projects.api.views.general_views import *
-from apps.projects.api.views.activities_views import *
-from apps.projects.api.views.projects_views import *
+from apps.activities.api.views.activities_views import (
+    ActivityViewSet,
+    ActivityCategoryViewSet,
+)
+from apps.projects.api.views.projects_views import (
+    ProjectViewSet,
+    ProjectCategoryViewSet,
+    ProgressViewSet,
+    MetricsViewSet,
+)
 
 router = DefaultRouter()
 
