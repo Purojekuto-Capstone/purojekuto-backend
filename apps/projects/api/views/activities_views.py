@@ -15,7 +15,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if request.META.get("HTTP_AUTHORIZATION") == None:
             return False
         else:
-            print("here is the token", request.META.get("HTTP_AUTHORIZATION"))
             decoded_token = decode_token(request.META.get("HTTP_AUTHORIZATION")[7:])
             if not decoded_token:
                 return False
@@ -25,24 +24,27 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if activity_id is None:
             return self.get_serializer().Meta.model.objects.filter(state=True)
         return (
-            self.get_serializer().Meta.model.objects.filter(id=pk, state=True).first()
+            self.get_serializer()
+            .Meta.model.objects.filter(activity_id=activity_id)
+            .first()
         )
 
     def list(self, request):
         token = self.verifyAuth(request)
         if token:
-            activity_serializer = self.get_serializer(self.get_queryset())
+            activity_serializer = self.get_serializer(
+                self.get_queryset(activity_id=self.request.query_params["activity_id"])
+            )
             event = EventsAPI().get_event(
                 token,
                 {
-                    "event_id": self.request.query_params["event_id"],
+                    "activity_id": self.request.query_params["activity_id"],
                     "project_id": self.request.query_params["project_id"],
                 },
             )
+            event.update(activity_serializer.data)
 
-            full_response = activity_serializer.data.update(event)
-
-            return Response(full_response, status=status.HTTP_200_OK)
+            return Response(event, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
@@ -53,11 +55,17 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if token:
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
+                print(
+                    "here is the serialized data", serializer.validated_data["project"]
+                )
                 activity_id = EventsAPI().add_event(token, serializer.validated_data)
-                serializer.validated_data["event_id"] = event_id
+                serializer.validated_data["activity_id"] = activity_id
                 serializer.save()
                 return Response(
-                    {"message": "Activity create succesfully"},
+                    {
+                        "message": "Activity create succesfully",
+                        "activity_id": activity_id,
+                    },
                     status=status.HTTP_201_CREATED,
                 )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -85,16 +93,32 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-    def update(self, request, pk=None):
+    def put(self, request):
         token = self.verifyAuth(request)
+        activity_id = self.request.query_params["activity_id"]
         if token:
-            if self.get_queryset(pk):
+            if self.get_queryset(activity_id):
                 activity_serializer = self.serializer_class(
-                    self.get_queryset(pk), request.data
+                    self.get_queryset(activity_id),
+                    request.data,
                 )
                 if activity_serializer.is_valid():
+                    updated_activity = EventsAPI().update_event(
+                        token,
+                        {
+                            "project_id": self.request.query_params["project_id"],
+                            "activity_id": activity_id,
+                        },
+                        activity_serializer.validated_data,
+                    )
                     activity_serializer.save()
-                    return Response(activity_serializer.data, status=status.HTTP_200_OK)
+                    return Response(
+                        {
+                            "message": "Activity updated succesfully",
+                            "activity_id": updated_activity,
+                        },
+                        status=status.HTTP_200_OK,
+                    )
                 return Response(
                     activity_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )

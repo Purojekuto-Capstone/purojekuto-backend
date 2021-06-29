@@ -12,7 +12,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = [
             "user",
             "project_name",
-            "project_category",
+            # "project_category",
             "start_date",
             "end_date",
             "work_time",

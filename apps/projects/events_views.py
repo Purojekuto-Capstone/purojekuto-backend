@@ -29,10 +29,12 @@ class EventsAPI:
         service = build("calendar", "v3", credentials=credentials)
         # Verify that the project name is not taken already in the db
         event = {
-            "summary": body["project_name"],
+            "summary": body["activity_name"],
+            "start": {"dateTime": body["start_date"].isoformat()},
+            "end": {"dateTime": body["end_date"].isoformat()},
         }
         created_event = (
-            service.events().insert(calendarId=body["id"], body=event).execute()
+            service.events().insert(calendarId=body["project"], body=event).execute()
         )
         print(created_event["id"])
         event_id = created_event["id"]
@@ -46,28 +48,47 @@ class EventsAPI:
         service = build("calendar", "v3", credentials=credentials)
         event = (
             service.events()
-            .get(calendarId=body["project_id"], eventId=body["event_id"])
+            .get(calendarId=body["project_id"], eventId=body["activity_id"])
             .execute()
         )
-        print(event["summary"])
-        return event
 
-    def update_calendar(self, credentials, body):
+        parsed_event = {
+            "id": event["id"],
+            "status": event["status"],
+            "htmlLink": event["htmlLink"],
+            "created": event["created"],
+            "summary": event["summary"],
+            "description": event.get("description", None),
+            "location": event.get("location", None),
+            "colorId": event.get("colorId", None),
+            "start": event["start"]["dateTime"],
+            "end": event["end"]["dateTime"],
+            "reminders": event["reminders"],
+        }
+        return parsed_event
+
+    def update_event(self, token, ids, body):
+
+        credentials = self.prepare_credentials(token)
 
         service = build("calendar", "v3", credentials=credentials)
-        calendar = (
+
+        event = (
             service.events()
-            .get(calendarId=body["project_id"], eventId="eventId")
+            .get(calendarId=ids["project_id"], eventId=ids["activity_id"])
             .execute()
         )
-        updated_calendar = (
+
+        event["summary"] = body["activity_name"]
+        event["start"]["dateTime"] = body["start_date"].isoformat()
+        event["end"]["dateTime"] = body["end_date"].isoformat()
+
+        updated_event = (
             service.events()
             .update(
-                calendarId=calendar["id"],
-                eventId=event["id"],
-                body=body["project_name"],
+                calendarId=ids["project_id"], eventId=ids["activity_id"], body=event
             )
             .execute()
         )
 
-        return updated_event["updated"]
+        return updated_event["id"]

@@ -10,7 +10,6 @@ from rest_framework import status
 
 
 class CalendarAPI:
-
     def prepare_credentials(self, token):
         credentials_json = json.loads(
             UsersView().get(sub=token["sub"]).values_list("credentials")[0][0]
@@ -58,14 +57,8 @@ class CalendarAPI:
             "summary": body["project_name"],
         }
 
-        try:
-            updated_calendar = (
-                service.calendars()
-                .update(calendarId=project_id, body=calendar)
-                .execute()
-            )
-        except HttpError as e:
-            print(e)
-            return e
+        updated_calendar = (
+            service.calendars().update(calendarId=project_id, body=calendar).execute()
+        )
 
         return updated_calendar["id"]

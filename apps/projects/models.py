@@ -52,8 +52,8 @@ class Project(models.Model):
     is_recurrent = models.BooleanField("Recurrent Project", default=False)
     start_date = models.DateField()
     end_date = models.DateField()
-    work_time = models.DurationField(default=None)
-    break_time = models.DurationField(default=None)
+    work_time = models.IntegerField(default=None)
+    break_time = models.IntegerField(default=None)
 
     historical = HistoricalRecords()
 
@@ -71,7 +71,7 @@ class Project(models.Model):
 
     def __str__(self):
         """Unicode representation of Product."""
-        return self.project_name
+        return self.project_id
 
 
 class ActivityCategory(models.Model):
@@ -114,13 +114,17 @@ class Activity(models.Model):
         Project, to_field="project_id", on_delete=models.CASCADE
     )
     user = models.ForeignKey(User, to_field="sub", on_delete=models.CASCADE)
+    activity_id = models.CharField(max_length=100)
     activity_name = models.CharField(max_length=30)
     activity_category = models.ForeignKey(
-        ActivityCategory, on_delete=models.CASCADE, verbose_name="Project Category"
+        ActivityCategory,
+        on_delete=models.CASCADE,
+        verbose_name="Project Category",
+        null=True,
     )
     is_recurrent = models.BooleanField("Recurrent Project", default=False)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
 
     historical = HistoricalRecords()
 
