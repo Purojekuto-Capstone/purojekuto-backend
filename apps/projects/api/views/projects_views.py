@@ -3,6 +3,7 @@ from apps.auths.decode_token import decode_token
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
+from googleapiclient.errors import HttpError
 
 from apps.projects.api.serializers.projects_serializers import (
     ProjectSerializer,
@@ -115,6 +116,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
+<<<<<<< HEAD
     def update(self, request, pk=None):
         """
         Update a project/calendar
@@ -128,13 +130,25 @@ class ProjectViewSet(viewsets.ModelViewSet):
         work_time ---> work hours in the week.
         break_time ---> break hours in the week.
         """
+=======
+    def put(self, request):
+>>>>>>> main
         token = self.verifyAuth(request)
+        project_id = self.request.query_params["project_id"]
         if token:
-            if self.get_queryset(pk):
+            if self.get_queryset(project_id):
                 project_serializer = self.serializer_class(
-                    self.get_queryset(pk), request.data
+                    self.get_queryset(project_id), self.request.data
                 )
                 if project_serializer.is_valid():
+                    updated_calendar = CalendarAPI().update_calendar(
+                        token, project_id, project_serializer.validated_data
+                    )
+                    if type(updated_calendar) is HttpError:
+                        return Response(
+                            {"message": "Trouble at Google"},
+                            status=status.HTTP_403_FORBIDDEN,
+                        )
                     project_serializer.save()
                     return Response(project_serializer.data, status=status.HTTP_200_OK)
                 return Response(

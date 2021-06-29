@@ -43,7 +43,7 @@ def get_credentials(request):
 
     # Getting the auth token to make petitions
     flow.fetch_token(
-        authorization_response=f"https://localhost:8000{request.get_full_path()}"
+        authorization_response=f"{env_variables.AUTH_RESPONSE_URL}{request.get_full_path()}"
     )
 
     # Saving the credentials
