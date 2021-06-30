@@ -212,6 +212,15 @@ class ActivityViewSet(viewsets.ModelViewSet):
 class ActivityCategoryViewSet(viewsets.GenericViewSet):
     serializer_class = ActivityCategorySerializer
 
+    def verifyAuth(self, request):
+        if request.META.get("HTTP_AUTHORIZATION") == None:
+            return False
+        else:
+            decoded_token = decode_token(request.META.get("HTTP_AUTHORIZATION")[7:])
+            if not decoded_token:
+                return False
+            return decoded_token
+
     def get_queryset(self, pk=None):
         if pk is None:
             return self.get_serializer().Meta.model.objects.filter(state=True)

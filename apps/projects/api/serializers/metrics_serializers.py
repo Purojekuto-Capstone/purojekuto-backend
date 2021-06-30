@@ -34,14 +34,14 @@ class MetricsSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
-            "id": instance.id,
-            "activity name": instance.activity_name,
-            "start date": instance.start_date,
-            "end date": instance.end_date,
-            "activity category": instance.activity_category.activity_category_name,
-            "project name": instance.project.project_name,
-            "project start": instance.project.start_date,
-            "project finish": instance.project.end_date,
-            "work time": instance.project.work_time,
-            "break time": instance.project.break_time,
+            "id": instance.id if instance.id is not None else '',
+            "activity name": instance.activity_name if instance.activity_name is not None else '',
+            "start date": instance.start_date if instance.start_date is not None else '',
+            "end date": instance.end_date if instance.end_date is not None else '',
+            "activity category": instance.activity_category.activity_category_name if instance.activity_category.activity_category_name is not None else '',
+            "project name": instance.project.project_name if instance.project.project_name  is not None else '',
+            "project start": instance.project.start_date if instance.project.start_date is not None else '',
+            "project finish": instance.project.end_date if instance.project.end_date is not None else '',
+            "work time": instance.project.work_time if instance.project.work_time is not None else '',
+            "break time": instance.project.break_time if instance.project.break_time is not None else '',
             }
