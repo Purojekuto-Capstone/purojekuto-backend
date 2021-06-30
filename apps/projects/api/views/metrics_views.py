@@ -9,6 +9,8 @@ from apps.projects.api.serializers.metrics_serializers import (
     MetricsSerializer
 )
 
+from apps.projects.utils.data_processing import clean_data
+
 class MetricsViewSet(viewsets.ModelViewSet):
     serializer_class = MetricsSerializer
 
@@ -38,8 +40,9 @@ class MetricsViewSet(viewsets.ModelViewSet):
         activity_category ---> The category of the event/activity.
         """
         project_serializer = self.get_serializer(self.get_queryset(), many=True)
+        metrics = clean_data(project_serializer.data)
 
-        return Response(project_serializer.data, status=status.HTTP_200_OK)
+        return Response(metrics, status=status.HTTP_200_OK)
 
 
 class ProgressViewSet(viewsets.ModelViewSet):

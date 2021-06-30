@@ -40,4 +40,8 @@ class MetricsSerializer(serializers.ModelSerializer):
             "end date": instance.end_date,
             "activity category": instance.activity_category.activity_category_name,
             "project name": instance.project.project_name,
+            "project start": instance.project.start_date,
+            "project finish": instance.project.end_date,
+            "work time": instance.project.work_time,
+            "break time": instance.project.break_time,
             }
