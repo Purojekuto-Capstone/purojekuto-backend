@@ -23,9 +23,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 return False
             return decoded_token
 
-    def get_queryset(self, project_id=None):
+    def get_queryset(self, project_id=None, user_sub=None):
         if project_id is None:
-            return self.get_serializer().Meta.model.objects.filter(state=True)
+            return self.get_serializer().Meta.model.objects.filter(
+                user_sub=user_sub, state=True
+            )
         return (
             self.get_serializer()
             .Meta.model.objects.filter(project_id=project_id, state=True)
@@ -46,13 +48,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         work_time ---> work hours in the week.
         break_time ---> break hours in the week.
         """
-        token = self.verifyAuth(request)
+        token = self.verifyAuth(self.request)
         if token:
             project_serializer = self.get_serializer(
-                self.get_queryset(project_id=self.request.query_params["project_id"])
+                self.get_queryset(user_sub=token["sub"]), many=True
             )
-            CalendarAPI().get_calendar(token, self.request.query_params["project_id"])
-            # print("aqui esta el calendar", calendar)
+            # CalendarAPI().get_calendar(token, project_id)
             return Response(project_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
@@ -72,8 +73,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         work_time ---> work hours in the week.
         break_time ---> break hours in the week.
         """
-        token = self.verifyAuth(request)
+        token = self.verifyAuth(self.request)
         if token:
+            request.data["user_sub"] = token["sub"]
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 project_id = CalendarAPI().add_calendar(
@@ -120,6 +122,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         token = self.verifyAuth(request)
         project_id = self.request.query_params["project_id"]
         if token:
+            request.data["user_sub"] = token["sub"]
             if self.get_queryset(project_id):
                 project_serializer = self.serializer_class(
                     self.get_queryset(project_id), self.request.data
@@ -142,6 +145,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 return Response(
                     project_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )
+            return Response(
+                {"message": "Project not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
