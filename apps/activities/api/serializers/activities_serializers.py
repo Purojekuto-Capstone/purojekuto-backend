@@ -10,6 +10,9 @@ class ActivitySerializer(serializers.ModelSerializer):
             "user",
             "activity_name",
             # "activity_category",
+            "description",
+            "location",
+            "color_id",
             "start_date",
             "end_date",
         ]

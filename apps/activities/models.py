@@ -46,6 +46,9 @@ class Activity(models.Model):
     user = models.ForeignKey(User, to_field="sub", on_delete=models.CASCADE)
     activity_id = models.CharField(max_length=100)
     activity_name = models.CharField(max_length=30)
+    description = models.TextField(null=True)
+    location = models.TextField(null=True)
+    color_id = models.CharField(max_length=10, null=True)
     activity_category = models.ForeignKey(
         ActivityCategory,
         on_delete=models.CASCADE,

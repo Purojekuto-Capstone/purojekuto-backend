@@ -8,8 +8,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
-            "user",
+            "user_sub",
             "project_name",
+            "project_id",
             # "project_category",
             "start_date",
             "end_date",

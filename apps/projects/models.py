@@ -39,8 +39,8 @@ class Project(models.Model):
     modified_date = models.DateField("Modified date", auto_now=True, auto_now_add=False)
     deleted_date = models.DateField("Delete", auto_now=True, auto_now_add=False)
 
-    user = models.ForeignKey(User, to_field="sub", on_delete=models.CASCADE)
-    project_id = models.CharField(max_length=100, unique=True)
+    user_sub = models.ForeignKey(User, to_field="sub", on_delete=models.CASCADE)
+    project_id = models.CharField(max_length=100, unique=True, default=None)
     project_name = models.CharField(max_length=30)
     project_category = models.ForeignKey(
         ProjectCategory,
