@@ -25,7 +25,7 @@ def clean_data(data):
 
     df['progress'] = (pd.to_datetime(df['project finish']) - pd.to_datetime(df['today']))/(pd.to_datetime(df['project finish'], utc = True) - pd.to_datetime(df['start date'], utc = True))*100
 
-    progress_metrics = df.groupby('project name')['progress'].mean()
+    progress_metrics = df.groupby('project name')['progress'].mean().to_dict()
 
     return {
         'projects comparision': project_events,
