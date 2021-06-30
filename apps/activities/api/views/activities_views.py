@@ -22,14 +22,21 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 return False
             return decoded_token
 
-    def get_queryset(self, activity_id=None):
+    def get_queryset(self, activity_id=None, start_date=None, end_date=None):
         if activity_id is None:
-            return self.get_serializer().Meta.model.objects.filter(state=True)
-        return (
-            self.get_serializer()
-            .Meta.model.objects.filter(activity_id=activity_id)
-            .first()
-        )
+            return self.get_serializer().Meta.model.objects.filter(
+                start_date__range=(start_date, end_date), state=True
+            )
+        elif start_date is not None:
+            return self.get_serializer().Meta.model.objects.filter(
+                activity_id=activity_id
+            )
+        else:
+            return (
+                self.get_serializer()
+                .Meta.model.objects.filter(activity_id=activity_id)
+                .first()
+            )
 
     def list(self, request):
         """
@@ -49,19 +56,40 @@ class ActivityViewSet(viewsets.ModelViewSet):
         project ---> The id of the event in calendar.
         activity_category ---> The category of the event/activity.
         """
+        project_id = self.request.query_params.get("project_id")
+        activity_id = self.request.query_params.get("activity_id")
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
         token = self.verifyAuth(request)
         if token:
             activity_serializer = self.get_serializer(
-                self.get_queryset(activity_id=self.request.query_params["activity_id"])
+                self.get_queryset(
+                    activity_id=activity_id,
+                    start_date=start_date,
+                    end_date=end_date,
+                ),
+                many=True,
             )
-            event = EventsAPI().get_event(
-                token,
-                {
-                    "activity_id": self.request.query_params["activity_id"],
-                    "project_id": self.request.query_params["project_id"],
-                },
-            )
-            event.update(activity_serializer.data)
+            if activity_id == None:
+                events = EventsAPI().list_events(
+                    token,
+                    {
+                        "project_id": project_id,
+                        "start_date": start_date,
+                        "end_date": end_date,
+                    },
+                )
+                # events.update(activity_serializer.data)
+                return Response(events, status=status.HTTP_200_OK)
+            else:
+                event = EventsAPI().get_event(
+                    token,
+                    {
+                        "activity_id": self.request.query_params["activity_id"],
+                        "project_id": self.request.query_params["project_id"],
+                    },
+                )
+                event.update(activity_serializer.data)
 
             return Response(event, status=status.HTTP_200_OK)
         else:
@@ -132,7 +160,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-    def put(self, request, pk=None):
+    def put(self, request):
         """
         Update the ativities/events an store in the app
 
@@ -147,16 +175,16 @@ class ActivityViewSet(viewsets.ModelViewSet):
         token = self.verifyAuth(request)
         activity_id = self.request.query_params["activity_id"]
         if token:
-            if self.get_queryset(activity_id):
+            request.data["user"] = token["sub"]
+            if self.get_queryset(activity_id=activity_id):
                 activity_serializer = self.serializer_class(
-                    self.get_queryset(activity_id),
-                    request.data,
+                    self.get_queryset(activity_id=activity_id), request.data
                 )
                 if activity_serializer.is_valid():
                     updated_activity = EventsAPI().update_event(
                         token,
                         {
-                            "project_id": self.request.query_params["project_id"],
+                            "project_id": activity_serializer.validated_data["project"],
                             "activity_id": activity_id,
                         },
                         activity_serializer.validated_data,
@@ -172,6 +200,9 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 return Response(
                     activity_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )
+            return Response(
+                {"message": "Activity not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED

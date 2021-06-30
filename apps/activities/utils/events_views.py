@@ -1,6 +1,5 @@
 # In all flows, verify that the project belongs to the user
 import json
-from pickle import NONE
 from apps.auths.utils.users_views import UsersView
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -86,6 +85,37 @@ class EventsAPI:
             "reminders": event["reminders"],
         }
         return parsed_event
+
+    def list_events(self, token, body):
+        credentials = self.prepare_credentials(token)
+        service = build("calendar", "v3", credentials=credentials)
+        events = (
+            service.events()
+            .list(
+                calendarId=body["project_id"],
+                timeMin=body["start_date"],
+                timeMax=body["end_date"],
+            )
+            .execute()
+        )
+        parsed_events = []
+        for event in events["items"]:
+            parsed_events.append(
+                {
+                    "id": event["id"],
+                    "status": event["status"],
+                    "htmlLink": event["htmlLink"],
+                    "created": event["created"],
+                    "summary": event["summary"],
+                    "description": event.get("description", None),
+                    "location": event.get("location", None),
+                    "colorId": event.get("colorId", None),
+                    "start": event["start"]["dateTime"],
+                    "end": event["end"]["dateTime"],
+                    "reminders": event["reminders"],
+                }
+            )
+        return parsed_events
 
     def update_event(self, token, ids, body):
 
