@@ -205,7 +205,8 @@ class ActivityCategoryViewSet(viewsets.GenericViewSet):
         """
         token = self.verifyAuth(request)
         if token:
-            return self.get_serializer().Meta.model.objects.filter(state=True)
+            activity_serializer = self.get_serializer(self.get_queryset(), many=True)
+            return Response(activity_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
