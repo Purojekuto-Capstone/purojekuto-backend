@@ -6,6 +6,8 @@ from apps.activities.api.views.activities_views import (
 from apps.projects.api.views.projects_views import (
     ProjectViewSet,
     ProjectCategoryViewSet,
+)
+from apps.projects.api.views.metrics_views import (
     ProgressViewSet,
     MetricsViewSet,
 )
