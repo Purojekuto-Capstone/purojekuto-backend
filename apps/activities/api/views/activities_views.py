@@ -83,11 +83,9 @@ class ActivityViewSet(viewsets.ModelViewSet):
         """
         token = self.verifyAuth(request)
         if token:
+            request.data["user"] = token["sub"]
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
-                print(
-                    "here is the serialized data", serializer.validated_data["project"]
-                )
                 activity_id = EventsAPI().add_event(token, serializer.validated_data)
                 serializer.validated_data["activity_id"] = activity_id
                 serializer.save()

@@ -1,5 +1,6 @@
 # In all flows, verify that the project belongs to the user
 import json
+from pickle import NONE
 from apps.auths.utils.users_views import UsersView
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -22,6 +23,22 @@ class EventsAPI:
 
         return credentials
 
+    def get_color_id(self, color):
+        switcher = {
+            "#7986cb": "1",
+            "#33b679": "2",
+            "#8e24aa": "3",
+            "#e67c73": "4",
+            "#f6c026": "5",
+            "#f5511d": "6",
+            "#039be5": "7",
+            "#616161": "8",
+            "#3f51b5": "9",
+            "#0b8043": "10",
+            "#d60000": "11",
+        }
+        return switcher.get(color, None)
+
     def add_event(self, token, body):
 
         credentials = self.prepare_credentials(token)
@@ -32,6 +49,9 @@ class EventsAPI:
             "summary": body["activity_name"],
             "start": {"dateTime": body["start_date"].isoformat()},
             "end": {"dateTime": body["end_date"].isoformat()},
+            "description": body.get("description", None),
+            "location": body.get("location", None),
+            "colorId": self.get_color_id(body.get("color_id", None)),
         }
         created_event = (
             service.events().insert(calendarId=body["project"], body=event).execute()
