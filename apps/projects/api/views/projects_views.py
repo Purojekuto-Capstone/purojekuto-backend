@@ -48,13 +48,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
         work_time ---> work hours in the week.
         break_time ---> break hours in the week.
         """
+        project_id = self.request.query_params.get("project_id")
         token = self.verifyAuth(self.request)
         if token:
-            project_serializer = self.get_serializer(
-                self.get_queryset(user_sub=token["sub"]), many=True
-            )
-            # CalendarAPI().get_calendar(token, project_id)
-            return Response(project_serializer.data, status=status.HTTP_200_OK)
+            if project_id is None:
+                project_serializer = self.get_serializer(
+                    self.get_queryset(user_sub=token["sub"]), many=True
+                )
+                # CalendarAPI().get_calendar(token, project_id)
+                return Response(project_serializer.data, status=status.HTTP_200_OK)
+            else:
+                project_serializer = self.get_serializer(
+                    self.get_queryset(project_id=project_id),
+                )
+                return Response(project_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
