@@ -110,6 +110,7 @@ ENV/
 env.bak/
 venv.bak/
 pythonenv*
+staticfiles/
 
 #Visual Studio Code Files
 .vscode

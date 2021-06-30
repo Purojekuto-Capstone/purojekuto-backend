@@ -20,7 +20,7 @@ def clean_data(data):
         events_projects.append(event_project)
 
     events_metrics = df.groupby('activity category')['one'].count().to_dict()
-    print(events_metrics)
+
     df['today'] = date.today()
 
     df['progress'] = (pd.to_datetime(df['project finish']) - pd.to_datetime(df['today']))/(pd.to_datetime(df['project finish'], utc = True) - pd.to_datetime(df['start date'], utc = True))*100
