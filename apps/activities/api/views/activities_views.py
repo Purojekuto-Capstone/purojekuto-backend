@@ -71,6 +71,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 many=True,
             )
             if activity_id == None:
+
                 events = EventsAPI().list_events(
                     token,
                     {
@@ -79,6 +80,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                         "end_date": end_date,
                     },
                 )
+                print('Hola')
                 # events.update(activity_serializer.data)
                 return Response(events, status=status.HTTP_200_OK)
             else:
