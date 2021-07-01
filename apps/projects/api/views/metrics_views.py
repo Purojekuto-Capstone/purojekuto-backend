@@ -27,7 +27,7 @@ class MetricsViewSet(viewsets.ModelViewSet):
     def get_queryset(self, project_id=None, user=None):
         if project_id is None:
             return self.get_serializer().Meta.model.objects.filter(
-                user_id = user, state=True
+                user = user, state=True
             )
         return (
             self.get_serializer()
@@ -55,8 +55,8 @@ class MetricsViewSet(viewsets.ModelViewSet):
         """
         token = self.verifyAuth(request)
         if token:
-            project_serializer = self.get_serializer(self.get_queryset(), many=True)
-            metrics = clean_data(project_serializer.data)
+            serializer = self.get_serializer(self.get_queryset(user=token['sub']), many=True)
+            metrics = clean_data(serializer.data)
             return Response(metrics, status=status.HTTP_200_OK)
         else:
             return Response(

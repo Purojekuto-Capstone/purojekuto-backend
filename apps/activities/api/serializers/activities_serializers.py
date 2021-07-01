@@ -9,7 +9,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "project",
             "user",
             "activity_name",
-            # "activity_category",
+            "activity_category",
             "description",
             "location",
             "color_id",

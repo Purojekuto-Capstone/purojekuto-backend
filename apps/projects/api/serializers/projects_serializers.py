@@ -11,7 +11,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "user_sub",
             "project_name",
             "project_id",
-            # "project_category",
+            "project_category",
             "start_date",
             "end_date",
             "work_time",
