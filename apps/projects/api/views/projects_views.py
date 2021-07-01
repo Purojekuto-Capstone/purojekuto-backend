@@ -31,7 +31,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             self.get_serializer()
             .Meta.model.objects.filter(project_id=project_id, state=True)
             .first()
-        )
+            )
 
     def list(self, request):
         """
@@ -88,6 +88,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     token, serializer.validated_data
                 )
                 serializer.validated_data["project_id"] = project_id
+                print(serializer.validated_data)
                 serializer.save()
                 return Response(
                     {
