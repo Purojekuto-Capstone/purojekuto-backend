@@ -1,3 +1,4 @@
+from apps.auths.api.views import UserViewSet
 from rest_framework.routers import DefaultRouter
 from apps.activities.api.views.activities_views import (
     ActivityViewSet,
@@ -23,6 +24,7 @@ router.register(
 router.register(r"project", ProjectViewSet, basename="project")
 router.register(r"activity", ActivityViewSet, basename="activity")
 router.register(r"progress", ProgressViewSet, basename="progress")
-router.register(r"metrics", MetricsViewSet, basename="metrics")
+router.register(r"metrics", MetricsViewSet, basename="metric")
+router.register(r"user", UserViewSet, basename="user")
 
 urlpatterns = router.urls
