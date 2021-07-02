@@ -55,6 +55,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     self.get_queryset(user_sub=token["sub"]), many=True
                 )
                 # CalendarAPI().get_calendar(token, project_id)
+                for data in project_serializer.data:
+                    data['user_sub']= token["sub"]
+
                 return Response(project_serializer.data, status=status.HTTP_200_OK)
             else:
                 project_serializer = self.get_serializer(
