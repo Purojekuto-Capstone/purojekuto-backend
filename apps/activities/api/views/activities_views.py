@@ -32,8 +32,10 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 activity_id=activity_id, state=True
             )
         else:
-            return self.get_serializer().Meta.model.objects.filter(
-                activity_id=activity_id, state=True
+            return (
+                self.get_serializer()
+                .Meta.model.objects.filter(activity_id=activity_id, state=True)
+                .first()
             )
 
     def list(self, request):
@@ -56,20 +58,19 @@ class ActivityViewSet(viewsets.ModelViewSet):
         """
         project_id = self.request.query_params.get("project_id")
         activity_id = self.request.query_params.get("activity_id")
-        print(activity_id)
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
         token = self.verifyAuth(request)
         if token:
-            activity_serializer = self.get_serializer(
-                self.get_queryset(
-                    activity_id=activity_id,
-                    start_date=start_date,
-                    end_date=end_date,
-                ),
-                many=True,
-            )
             if activity_id == None:
+                activity_serializer = self.get_serializer(
+                    self.get_queryset(
+                        activity_id=activity_id,
+                        start_date=start_date,
+                        end_date=end_date,
+                    ),
+                    many=True,
+                )
 
                 events = EventsAPI().list_events(
                     token,
@@ -80,13 +81,17 @@ class ActivityViewSet(viewsets.ModelViewSet):
                     },
                 )
                 for i, event in enumerate(events):
-                    event["activity category"] = activity_serializer.data[i][
+                    event["activity_category"] = activity_serializer.data[i][
                         "activity_category"
                     ]
                 # events.update(activity_serializer.data)
                 return Response(events, status=status.HTTP_200_OK)
             else:
-
+                activity_serializer = self.get_serializer(
+                    self.get_queryset(
+                        activity_id=activity_id,
+                    ),
+                )
                 event = EventsAPI().get_event(
                     token,
                     {
@@ -95,7 +100,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                     },
                 )
                 # event.update(activity_serializer.data)
-                event["activity_category"] = activity_serializer.data[0][
+                event["activity_category"] = activity_serializer.data[
                     "activity_category"
                 ]
                 return Response(event, status=status.HTTP_200_OK)

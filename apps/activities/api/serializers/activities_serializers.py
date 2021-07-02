@@ -25,16 +25,22 @@ class ActivitySerializer(serializers.ModelSerializer):
             activity_name = "otras"
         return {
             "activity_id": instance.activity_id,
-            "project": instance.project if instance.project is not None else '',
-            "user": instance.user if instance.user is not None else '',
-            "activity_name": instance.activity_name if instance.activity_name is not None else '',
+            "project": instance.project if instance.project is not None else "",
+            "user": instance.user if instance.user is not None else "",
+            "activity_name": instance.activity_name
+            if instance.activity_name is not None
+            else "",
             "activity_category": activity_name,
-            "description": instance.description if instance.description is not None else '',
-            "location": instance.location if instance.location  is not None else '',
-            "color_id": instance.color_id if instance.color_id is not None else '',
-            "start_date": instance.start_date if instance.start_date is not None else '',
-            "end_date": instance.end_date if instance.end_date is not None else '',
-            }
+            "description": instance.description
+            if instance.description is not None
+            else "",
+            "location": instance.location if instance.location is not None else "",
+            "color_id": instance.color_id if instance.color_id is not None else "",
+            "start_date": instance.start_date
+            if instance.start_date is not None
+            else "",
+            "end_date": instance.end_date if instance.end_date is not None else "",
+        }
 
 
 class ActivityCategorySerializer(serializers.ModelSerializer):
