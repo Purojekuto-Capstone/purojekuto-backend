@@ -70,6 +70,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 ),
                 many=True,
             )
+
             if activity_id == None:
 
                 events = EventsAPI().list_events(
@@ -80,10 +81,12 @@ class ActivityViewSet(viewsets.ModelViewSet):
                         "end_date": end_date,
                     },
                 )
-                print('Hola')
+                for i, event in enumerate(events):
+                    event['activity category'] = activity_serializer.data[i]['activity_category']
                 # events.update(activity_serializer.data)
                 return Response(events, status=status.HTTP_200_OK)
             else:
+                
                 event = EventsAPI().get_event(
                     token,
                     {
@@ -92,8 +95,8 @@ class ActivityViewSet(viewsets.ModelViewSet):
                     },
                 )
                 event.update(activity_serializer.data)
-
-            return Response(event, status=status.HTTP_200_OK)
+                event['activity category'] = activity_serializer.data[i]['activity_category']
+                return Response(event, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED

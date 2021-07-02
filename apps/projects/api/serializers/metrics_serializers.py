@@ -34,7 +34,7 @@ class MetricsSerializer(serializers.ModelSerializer):
             "activity name": instance.activity_name if instance.activity_name is not None else '',
             "start date": instance.start_date if instance.start_date is not None else '',
             "end date": instance.end_date if instance.end_date is not None else '',
-            "activity category": instance.activity_category.activity_category_name if instance.activity_category.activity_category_name is not None else '',
+            "activity category": ActivityCategory().activity_category_name if ActivityCategory().activity_category_name is not None else '',
             "project name": instance.project.project_name if instance.project.project_name  is not None else '',
             "project start": instance.project.start_date if instance.project.start_date is not None else '',
             "project finish": instance.project.end_date if instance.project.end_date is not None else '',
