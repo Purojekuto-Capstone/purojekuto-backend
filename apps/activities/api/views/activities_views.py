@@ -29,14 +29,13 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
         elif start_date is not None:
             return self.get_serializer().Meta.model.objects.filter(
-                activity_id=activity_id
+                activity_id=activity_id, state=True
             )
         else:
-            return (
-                self.get_serializer()
-                .Meta.model.objects.filter(activity_id=activity_id)
-                .first()
-            )
+            return self.get_serializer().Meta.model.objects.filter(
+                activity_id=activity_id, state=True
+                )
+
 
     def list(self, request):
         """
@@ -58,6 +57,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         """
         project_id = self.request.query_params.get("project_id")
         activity_id = self.request.query_params.get("activity_id")
+        print(activity_id)
         start_date = self.request.query_params.get("start_date")
         end_date = self.request.query_params.get("end_date")
         token = self.verifyAuth(request)
@@ -70,7 +70,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 ),
                 many=True,
             )
-
             if activity_id == None:
 
                 events = EventsAPI().list_events(
@@ -86,7 +85,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 # events.update(activity_serializer.data)
                 return Response(events, status=status.HTTP_200_OK)
             else:
-                
+
                 event = EventsAPI().get_event(
                     token,
                     {
@@ -94,8 +93,8 @@ class ActivityViewSet(viewsets.ModelViewSet):
                         "project_id": self.request.query_params["project_id"],
                     },
                 )
-                event.update(activity_serializer.data)
-                event['activity category'] = activity_serializer.data[i]['activity_category']
+                #event.update(activity_serializer.data)
+                event['activity category'] = activity_serializer.data[0]['activity_category']
                 return Response(event, status=status.HTTP_200_OK)
         else:
             return Response(

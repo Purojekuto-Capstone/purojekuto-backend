@@ -6,6 +6,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = [
+            "activity_id",
             "project",
             "user",
             "activity_name",
@@ -19,6 +20,7 @@ class ActivitySerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            "activity_id": instance.activity_id,
             "project": instance.project if instance.project is not None else '',
             "user": instance.user if instance.user is not None else '',
             "activity_name": instance.activity_name if instance.activity_name is not None else '',
