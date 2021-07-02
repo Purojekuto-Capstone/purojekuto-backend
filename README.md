@@ -12,27 +12,22 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 2. Crear entorno virtual:
   * Windows:
   Ejecutar en terminal
-  `py -m venv`
+   * `py -m venv venv`
   * Linux:
-  ``
+   * `python3 -m venv venv`
   * Mac OS:
-  ``
+   * `python3 -m venv venv`
   
 3. Iniciar el entorno virtual:
   * Windows:
-  ``
+   * `.\venv\Scripts\activate.bat`
   * Linux:
-  ``
+   * `source ./venv/bin/activate`
   * Mac OS:
-  ``
+   * `source ./venv/bin/activate`
   
 4. Instalar librerias:
-  * Windows:
-  ``
-  * Linux:
-  ``
-  * Mac OS:
-  ``
+  * `pip install -r requirements.txt`
   
 5. Configurar el archivo `.env`:
   * Copiar valores del archivo `.env.example` dejar inicialmente, el valor `DEBUG` en 1.
@@ -40,11 +35,11 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 6. Dentro de los subdirectorios en *apps*, crear un nuevo directorio llamado *migrations* y dentro del mismo crear el archivo `__init__.py`.
 
 6. Iniciar las migraciones:
-  ``
-  ``
+  * `python3 manage.py makemigrations`
+  * `python3 manage.py migrate`
 
 7. Iniciar el servidor:
-  ``
+  * `python3 manage.py runserver`
 
 8. (Opcional) Para correr con base de datos propia, en `.env` llenar los datos de autenticacion, dejar `DEBUG` en 0, realizar migraciones y iniciar servidor.
 
