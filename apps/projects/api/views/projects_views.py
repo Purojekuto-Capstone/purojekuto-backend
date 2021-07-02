@@ -31,7 +31,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             self.get_serializer()
             .Meta.model.objects.filter(project_id=project_id, state=True)
             .first()
-            )
+        )
 
     def list(self, request):
         """
@@ -56,14 +56,19 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 )
                 # CalendarAPI().get_calendar(token, project_id)
                 for data in project_serializer.data:
-                    data['user_sub']= token["sub"]
+                    data["user_sub"] = token["sub"]
 
                 return Response(project_serializer.data, status=status.HTTP_200_OK)
             else:
                 project_serializer = self.get_serializer(
                     self.get_queryset(project_id=project_id),
                 )
-                return Response(project_serializer.data, status=status.HTTP_200_OK)
+
+                parsed_response = dict(project_serializer.data)
+                parsed_response["user_sub"] = token["sub"]
+                print("despues", parsed_response)
+
+                return Response(parsed_response, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
@@ -162,6 +167,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(
                 {"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
+
+
 class ProjectCategoryViewSet(viewsets.GenericViewSet):
     serializer_class = ProjectCategorySerializer
 
