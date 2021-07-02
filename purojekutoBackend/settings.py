@@ -110,7 +110,7 @@ WSGI_APPLICATION = "purojekutoBackend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-if env_variables.DEBUG == "0":
+if env_variables.DEBUG == "1":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
