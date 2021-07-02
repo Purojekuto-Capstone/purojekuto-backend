@@ -34,8 +34,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         else:
             return self.get_serializer().Meta.model.objects.filter(
                 activity_id=activity_id, state=True
-                )
-
+            )
 
     def list(self, request):
         """
@@ -81,7 +80,9 @@ class ActivityViewSet(viewsets.ModelViewSet):
                     },
                 )
                 for i, event in enumerate(events):
-                    event['activity category'] = activity_serializer.data[i]['activity_category']
+                    event["activity category"] = activity_serializer.data[i][
+                        "activity_category"
+                    ]
                 # events.update(activity_serializer.data)
                 return Response(events, status=status.HTTP_200_OK)
             else:
@@ -93,8 +94,10 @@ class ActivityViewSet(viewsets.ModelViewSet):
                         "project_id": self.request.query_params["project_id"],
                     },
                 )
-                #event.update(activity_serializer.data)
-                event['activity category'] = activity_serializer.data[0]['activity_category']
+                # event.update(activity_serializer.data)
+                event["activity_category"] = activity_serializer.data[0][
+                    "activity_category"
+                ]
                 return Response(event, status=status.HTTP_200_OK)
         else:
             return Response(

@@ -66,7 +66,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
                 parsed_response = dict(project_serializer.data)
                 parsed_response["user_sub"] = token["sub"]
-                print("despues", parsed_response)
 
                 return Response(parsed_response, status=status.HTTP_200_OK)
         else:
