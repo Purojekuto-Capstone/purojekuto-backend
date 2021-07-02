@@ -29,12 +29,17 @@ class MetricsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
+        try:
+            activity_name = instance.activity_category.activity_category_name
+        except:
+            activity_name = "otras"
+
         return {
             "id": instance.id if instance.id is not None else '',
             "activity name": instance.activity_name if instance.activity_name is not None else '',
             "start date": instance.start_date if instance.start_date is not None else '',
             "end date": instance.end_date if instance.end_date is not None else '',
-            "activity category": ActivityCategory().activity_category_name if ActivityCategory().activity_category_name is not None else '',
+            "activity category": activity_name,
             "project name": instance.project.project_name if instance.project.project_name  is not None else '',
             "project start": instance.project.start_date if instance.project.start_date is not None else '',
             "project finish": instance.project.end_date if instance.project.end_date is not None else '',

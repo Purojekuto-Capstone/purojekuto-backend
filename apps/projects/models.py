@@ -12,7 +12,7 @@ class ProjectCategory(models.Model):
     deleted_date = models.DateField("Delete", auto_now=True, auto_now_add=False)
 
     project_category_name = models.CharField(
-        "Descripcion", max_length=50, unique=True, null=False, blank=False
+        max_length=50, unique=True, null=False, blank=False
     )
 
     @property
