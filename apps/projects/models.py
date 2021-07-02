@@ -44,9 +44,8 @@ class Project(models.Model):
     project_name = models.CharField(max_length=30)
     project_category = models.ForeignKey(
         ProjectCategory,
-        on_delete=models.CASCADE,
-        verbose_name="Project Category",
-        null=True,
+        to_field="id",
+        on_delete=models.CASCADE
     )
     is_recurrent = models.BooleanField("Recurrent Project", default=False)
     start_date = models.DateField()

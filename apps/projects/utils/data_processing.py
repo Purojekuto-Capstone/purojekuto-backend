@@ -6,6 +6,7 @@ from datetime import date, timedelta
 def clean_data(data):
     try:
         df = pd.DataFrame(data)
+        print(df['project name'])
         df['one'] = 1
 
         project_events = df.groupby('project name')['one'].count().to_dict()

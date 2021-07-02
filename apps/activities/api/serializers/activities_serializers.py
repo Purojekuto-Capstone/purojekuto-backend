@@ -24,7 +24,7 @@ class ActivitySerializer(serializers.ModelSerializer):
             "project": instance.project if instance.project is not None else '',
             "user": instance.user if instance.user is not None else '',
             "activity_name": instance.activity_name if instance.activity_name is not None else '',
-            "activity_category": instance.activity_category.activity_category_name if instance.activity_category.activity_category_name is not None else '',
+            "activity_category": ActivityCategory().activity_category_name if ActivityCategory().activity_category_name is not None else '',
             "description": instance.description if instance.description is not None else '',
             "location": instance.location if instance.location  is not None else '',
             "color_id": instance.color_id if instance.color_id is not None else '',

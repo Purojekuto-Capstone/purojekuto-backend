@@ -49,11 +49,8 @@ class Activity(models.Model):
     description = models.TextField(null=True)
     location = models.TextField(null=True)
     color_id = models.CharField(max_length=10, null=True)
-    activity_category = models.ForeignKey(
-        ActivityCategory,
-        on_delete=models.CASCADE,
-        verbose_name="Project Category",
-        null=True,
+    activity_category= models.ForeignKey(
+        ActivityCategory, to_field="id", on_delete=models.CASCADE
     )
     is_recurrent = models.BooleanField("Recurrent Project", default=False)
     start_date = models.DateTimeField()
