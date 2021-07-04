@@ -6,58 +6,29 @@ from datetime import date, timedelta
 def clean_data(data):
     try:
         df = pd.DataFrame(data)
-        print(df['activity category'])
+        df['start date'] = pd.to_datetime(df['start date'])
+        df['end date'] = pd.to_datetime(df['end date'])
+        df['project start'] = pd.to_datetime(df['project start'])
+        df['project finish'] = pd.to_datetime(df['project finish'])
         df['one'] = 1
-
-        project_events = df.groupby('project name')['one'].count().to_dict()
-
-        cols = list(df['project name'].value_counts().index)
-
-        events_projects = []
-        for col in cols:
-            event_project = dict()
-            event_project['project name'] = col
-            event_project['metrics'] = df[df['project name'] == col]['activity category'].value_counts().to_dict()
-            events_projects.append(event_project)
-
-        events_metrics = df.groupby('activity category')['one'].count().to_dict()
-
         df['today'] = date.today()
 
-        df['progress'] = (pd.to_datetime(df['project finish']) - pd.to_datetime(df['today']))/(pd.to_datetime(df['project finish'], utc = True) - pd.to_datetime(df['start date'], utc = True))*100
+        df['hours']= pd.to_timedelta(df['end date']- df['start date'], unit='hr')
+        df['hours'] = df['hours'].astype('timedelta64[m]').astype('float').apply(lambda x: x/60)
 
-        df['progress'] = df['progress'].apply(lambda x: x if x >= 0 else 100)
-        df['progress'] = df['progress'].apply(lambda x: x if x < 100 else 0)
+        project = df.groupby('project name')['hours'].sum()
+        hours = list(project.values)
+        names = list(project.index)
 
-        progress_metrics = df.groupby('project name')['progress'].mean().to_dict()
+        data = []
+        for i, name in enumerate(names):
+            project = {}
+            project['name'] = name
+            project['hours'] = hours[i]
+            data.append(project)
 
-        return {
-            'projects comparision': project_events,
-            'events in projects':  events_projects,
-            'activities comparison': events_metrics,
-            'progress metrics': progress_metrics
-        }
+        return data
     except:
-        return {'activities comparison': {'escribir': 1,
-                'investigar': 1,
-                'leer': 1,
-                'llamadas': 5,
-                'planear': 1,
-                'programar': 3,
-                'reunion': 1,
-                'trotar': 2},
-                'events in projects': [{'metrics': {'escribir': 1,
-                    'investigar': 1,
-                    'leer': 1,
-                    'llamadas': 1,
-                    'trotar': 1},
-                'project name': 'ML bot'},
-                {'metrics': {'planear': 1, 'programar': 3, 'reunion': 1},
-                'project name': 'project manage app'},
-                {'metrics': {'llamadas': 4, 'trotar': 1}, 'project name': 'Web app Market'}],
-                'progress metrics': {'ML bot': -4.316909638439045,
-                'Web app Market': 206.63992791214247,
-                'project manage app': 62.91876384624253},
-                'projects comparision': {'ML bot': 5,
-                'Web app Market': 5,
-                'project manage app': 5}}
+        return [{'hours': 5.583333333333334, 'name': 'ML bot'},
+                {'hours': 3.75, 'name': 'Web app Market'},
+                {'hours': 8.0, 'name': 'project manage app'}]
